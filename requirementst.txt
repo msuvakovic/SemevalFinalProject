@@ -1,0 +1,7 @@
+transformers>=4.45.0
+torch
+pandas
+scikit-learn
+nltk
+textstat
+tqdm
