@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyd
+*.so
+.DS_Store
+*~
+*.cpython-3*.pyc
+*.cpython-3*.so
+checkpoints/
+logs/
+.pth
+*.pt
+best_model_weights.pt
+local_neobert_loader.cpython-3*.so
+patched_neobert_modeling.py
