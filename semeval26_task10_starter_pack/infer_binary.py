@@ -6,11 +6,9 @@
 # -------------------------------------------------------------
 
 import json
-import os
 import torch
 from torch import nn
 from torch.nn import TransformerEncoderLayer, TransformerEncoder
-import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 from ollama import Client as OllamaClient
@@ -20,13 +18,13 @@ from safetensors.torch import load_file as load_safetensors
 # 6️⃣  Tiny PyTorch classifier  
 # ---------------------------------------------------------------------------- #  
 class EmbeddingClassifier(nn.Module):  
-    """Linear layer: 768‑dim (or whatever) embedding ➜ 2 logits."""  
-  
+    """Linear layer: 4096‑dim (or whatever) embedding ➜ 2 logits."""  
+
     def __init__(self, embedding_dim: int, num_labels: int):  
         super().__init__()  
         self.fc = nn.Linear(embedding_dim, num_labels)  
         self.loss_fct = nn.CrossEntropyLoss()  
-  
+
     def forward(self, embedding: torch.Tensor, labels=None):  
         logits = self.fc(embedding)  
         output = {"logits": logits}  
@@ -86,7 +84,7 @@ class BiggerMLP(nn.Module):
             nn.Linear(256, num_labels)  
         )  
         self.loss_fct = nn.CrossEntropyLoss()  
-  
+
     def forward(self, embedding, labels=None):  
         logits = self.net(embedding)  
         out = {"logits": logits}  
@@ -98,6 +96,7 @@ class BiggerMLP(nn.Module):
 # 2. Label mapping
 # ------------------------------------------------------------------
 ID2LABEL = {0: "No", 1: "Yes"}
+EMBEDDING_DIM = 4096 # CHANGE THIS TO MATCH YOUR EMBEDDING MODEL (4096 for Qwen3-embed)
 
 # ------------------------------------------------------------------
 # 3. Main inference routine
@@ -110,7 +109,7 @@ def main(
 ):
     # 3.1 Load the trained model
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = MLPClassifier(embedding_dim=4096, num_labels=2).to(device)
+    model = MLPClassifier(embedding_dim=EMBEDDING_DIM, num_labels=len(ID2LABEL)).to(device)
 
     # Find the checkpoint file (either .safetensors or .bin)
     ckpt_path = Path(model_dir) / "model.safetensors"

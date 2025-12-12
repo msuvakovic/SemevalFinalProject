@@ -22,6 +22,9 @@ Scripts to facilitate participation in the 2026 Semeval Task 10: PsyCoMark -- Ps
    5. you should score ~ 0.76 weighted F1 on the dev set
 
 ## Changes
-Ollama must be installed and running locally, with `qwen3-embedding` model loaded in memory.
-Running train_binary.py the first time will generate the embeddings using the embedding model and save them to embeddings.npy. \\
-Future trainings will be much faster since they won't have to recalculate the embeddings.
+Ollama must be installed and running locally, with `qwen3-embedding` model loaded in memory. \
+Running train_binary.py the first time will generate the embeddings using the embedding model and save them to embeddings.npy. \
+Future trainings will be much faster since they won't have to recalculate the embeddings. \
+Running infer_binary.py will create a submissions.jsonl as mentioned above. \
+Files that didn't undergo modification and aren't necessary to the binary classifier training and inference pipeline like the `one_span` files have been removed to avoid confusion. \
+For more instructions on experimentation and explanation of the code, please refer to the README.md file in the root directory of this repository.
