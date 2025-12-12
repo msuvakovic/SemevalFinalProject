@@ -1,2 +1,2 @@
-# SemevalFinalProject
-group for NLP 243 final project
+# SemEval 2026 Task 10 Experiments
+## Ryan King
