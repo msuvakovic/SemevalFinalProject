@@ -7,8 +7,10 @@ This project implements a detection pipeline for conspiracy theories using **Neo
 2. Install dependencies:
    `pip install -r requirements.txt`
    `pip install --upgrade torch`
-3. Download the dataset from Kaggle: [Fake and Real News Dataset](https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset)
-4. Extract `True.csv` and `Fake.csv` into a folder named `data/` in this directory.
+3. Download the "train_redacted.jsonl" file from https://zenodo.org/records/17065240 and place the files in the /data folder located within the current file directory level 
+4. run "rehydrate_data.py" from https://github.com/hide-ous/semeval26_task10_starter_pack to rehydrate the dataset.
+5. place the rehydrated dataset in /data
+
 
 ## How to Run the Ablation Study
 
@@ -24,9 +26,10 @@ python run_ablation.py --sentiment --complexity
 python run_ablation.py --sentiment --pronouns
 python run_ablation.py --complexity --pronouns
 python run_ablation.py --sentiment --complexity --pronouns
+
 ```
 
-Results:
+Results(innaccurate at the moment with new changes):
 
 NeoBert only:
 Accuracy: 0.7975
@@ -66,3 +69,15 @@ F1 Score: 0.7547
     accuracy                           0.76       400
    macro avg       0.76      0.76      0.75       400
 weighted avg       0.76      0.76      0.75       400
+
+
+## Notes: changes by Milos (origianlly Glenn's repository)
+
+Added the following:
+- Added "xformers==0.0.28.post3" to requirements.txt
+- included freezing of the last three transformer encoders and the layer normalization of the NeoBERT model
+- changed learning rate (to accomodate larger batch size)
+- changed weight decay to 0.01
+- changed batch size to 128 (may need to reduce this batch size on lower end gpu/Macintosh A-series chips)
+- adapted the model to no longer use NeoBERT specific configs and instead using "AutoModel" from transformers library. with added arugment " trust_remote_code=True"
+

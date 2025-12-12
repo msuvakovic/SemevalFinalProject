@@ -53,7 +53,7 @@
 import torch
 import torch.nn as nn
 # Use the specific BertModel and BertConfig classes from transformers
-from transformers import BertModel, BertConfig
+from transformers import BertModel, BertConfig, AutoModel
 
 class NeoBERTDetector(nn.Module):
     def __init__(self, manual_feature_dim, num_labels=2):
@@ -70,28 +70,34 @@ class NeoBERTDetector(nn.Module):
             # 2. Force load the weights into the standard BertModel class
             # We ignore potential config mismatch warnings (which are expected since 
             # NeoBERT has RoPE/SwiGLU, but the core weight keys are often compatible).
-            self.neobert = BertModel.from_pretrained(
-                "chandar-lab/NeoBERT", 
-                config=config,
-                ignore_mismatched_sizes=True
-            )
+            self.neobert = AutoModel.from_pretrained("chandar-lab/NeoBERT", trust_remote_code=True)
+         
             print("✅ Successfully loaded NeoBERT weights into standard BertModel.")
 
         except Exception as e:
             raise RuntimeError(f"🛑 Failed to load NeoBERT weights into standard BertModel. Original error: {e}")
         
         # Freeze NeoBERT layers for faster ablation study
-        for param in self.neobert.parameters():
-            param.requires_grad = False
-            
+        # freeze everything but last layer and last transformer encoder block
+        for name, param in self.neobert.named_parameters():
+            if not (
+            name.startswith("transformer_encoder.27.") 
+            or name.startswith("transformer_encoder.26.")
+            or name.startswith("transformer_encoder.25.")
+            or name == "layer_norm.weight" 
+            or name == "layer_norm.bias" ):
+                param.requires_grad = False
+            else:
+                param.requires_grad = True
         # BERT hidden size is 768
-        self.bert_hidden_size = 768
+        self.bert_hidden_size = self.neobert.config.hidden_size
+        print("hidden size is: ", str(self.bert_hidden_size))
         
         # Classification Head: BERT Embedding + Psycholinguistic Features
         self.classifier = nn.Sequential(
             nn.Linear(self.bert_hidden_size + manual_feature_dim, 256),
             nn.ReLU(),
-            nn.Dropout(0.3),
+            nn.Dropout(0.1),
             nn.Linear(256, num_labels)
         )
 

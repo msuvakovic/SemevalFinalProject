@@ -240,7 +240,7 @@ def train(args):
         print("Using device: CPU")
 
     # 2. Load Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained("chandar-lab/NeoBERT")
+    tokenizer = AutoTokenizer.from_pretrained("chandar-lab/NeoBERT", trust_remote_code=True)
 
     # 3. Prepare Dataset
     # CHANGED: Loading from single JSON file instead of separate CSVs
@@ -262,9 +262,9 @@ def train(args):
     test_size = len(full_dataset) - train_size
     train_dataset, test_dataset = random_split(full_dataset, [train_size, test_size])
 
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True,num_workers=8)
     # We use the test set as validation for early stopping in this ablation context
-    val_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
+    val_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=8)
 
     # 4. Feature Dimension
     extractor = PsychoLinguisticExtractor()
@@ -272,9 +272,10 @@ def train(args):
 
     # 5. Initialize Model
     model = NeoBERTDetector(manual_feature_dim=feat_dim).to(device)
-    
+    # enc_params = [p for n, p in model.neobert.named_parameters() if p.requires_grad]
+    # head_params = list(model.classifier.paramters())
     # Optimizer & Loss
-    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-4, weight_decay=1e-5) 
+    optimizer = torch.optim.AdamW(model.parameters(), lr=3e-5, weight_decay=0.01) 
     criterion = torch.nn.CrossEntropyLoss()
     
     # Scheduler: Reduce LR if validation loss stops dropping
