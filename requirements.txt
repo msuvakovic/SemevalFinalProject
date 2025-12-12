@@ -1,0 +1,8 @@
+transformers>=4.45.0
+torch
+pandas
+scikit-learn
+nltk
+textstat
+tqdm
+xformers==0.0.28.post3
