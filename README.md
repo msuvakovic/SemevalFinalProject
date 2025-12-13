@@ -2,6 +2,11 @@
 
 This project implements a detection pipeline for conspiracy theories using **NeoBERT** (chandar-lab) augmented with psycholinguistic features.
 
+
+## Branch Seperation
+
+The main branch consists of the neobert tests used in the report. There exists seperate branhces within the "SemevalFinalProject" repository for each group member where they conducted their own experimentation. 
+
 ## Prerequisites
 1. source ~/myenv/bin/activate
 2. Install dependencies:
@@ -10,6 +15,7 @@ This project implements a detection pipeline for conspiracy theories using **Neo
 3. Download the "train_redacted.jsonl" file from https://zenodo.org/records/17065240 and place the files in the /data folder located within the current file directory level 
 4. run "rehydrate_data.py" from https://github.com/hide-ous/semeval26_task10_starter_pack to rehydrate the dataset.
 5. place the rehydrated dataset in /data
+
 
 
 ## How to Run the Ablation Study
