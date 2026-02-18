@@ -13,11 +13,11 @@
 2. **Huth pipeline** — We also implemented the method from a famous 2023 paper (Huth et al.) so we can compare ourselves to that baseline. Their approach: first learn “what brain activity looks like for each piece of text,” then use that to score possible sentences and pick the best one.
 
 **Results so far:**  
-- **Ranking:** In one specific setup we got **~42% Top-1** (Run 5, subject UTS03, story *avatar*): the model had to pick the correct word out of 100 options (1 correct + 99 wrong words from the *same story*), using only brain data (no text clue). Random would be 1%. In other setups (e.g. different stories or strict “telepathy” evals) we’ve seen 0%—so we’re still figuring out when it works. See EXPERIMENT.md and the “Results” section below for the exact setup.  
+- **Ranking:** We observed **~42% Top-1** in one setup (Run 5, UTS03, story *avatar*, 1-in-100 with in-story distractors). **Important:** We ran a **blind control** (same eval but with the fMRI signal zeroed out) and got similar accuracy. That means the 42% is **largely or solely due to the language prior**—the LLM ranking words by how plausible they are in a story context, not from decoding brain activity. So we **cannot** claim the model is using fMRI for that task; we need to see a big drop in the blind condition to claim brain signal. In other setups (e.g. strict “telepathy” evals) we’ve seen ~0%.  
 - **Generation / full-sentence decoding:** Still very weak. The model often says generic or wrong words; we’re not yet “reading minds” into full sentences.  
 - **Huth baseline:** We got their pipeline running on our data. Their decoder also struggles on our test stories (low scores), which tells us the task is genuinely hard and we’re not missing something obvious.
 
-**Bottom line:** We have a working pipeline and evidence that the model can use brain data to choose among words in some conditions. Turning that into reliable sentence-level “brain reading” is the next step.
+**Bottom line:** We have a working pipeline. The earlier 42% ranking result does **not** hold up as evidence of fMRI use once we control for the language prior (blind test). Turning that into reliable, fMRI-driven “brain reading” is the next step.
 
 ---
 
@@ -61,6 +61,8 @@ We compare our approach to a strong baseline from the literature:
 | **BLEU** | A metric that measures how much the model’s output overlaps with the reference (correct) text (n-gram overlap). Higher is better. |
 | **METEOR / BERTScore** | Other metrics that compare model output to reference; they capture meaning and wording. Higher is better. |
 | **Ranking (e.g. 1-in-100)** | We give the model one correct word and 99 wrong ones; can it rank the correct word higher? **Top-1** = did the correct word get the highest score? Chance = 1%. |
+| **Language prior** | The tendency of the LLM to prefer some words over others (e.g. likely next words in a story) even without brain input. If we don’t control for it, we can mistake “LLM guessed a plausible word” for “decoded from fMRI.” |
+| **Blind control** | We run the same eval but **zero out the fMRI** input. If accuracy stays high, the result is from the language prior, not from brain decoding. We need the blind condition to drop toward chance to claim fMRI use. |
 | **Perceived vs imagined speech** | **Perceived** = person listens to audio. **Imagined** = person imagines saying/hearing speech without sound. We use the same encoder for both (as in Huth). |
 | **Per-subject** | We train and evaluate **separately for each person** (UTS01, UTS02, …). We don’t mix different people’s brains in one model. |
 | **Train / val / test** | **Train** = data we learn from. **Val** = we check during training to avoid overfitting. **Test** = we never train on this; we only evaluate here to report results. |
@@ -77,6 +79,7 @@ Here’s what exists in the repo and what it’s for, in plain language.
 | **Huth dataset loader** | Loads our fMRI data and the correct text, aligned in time (we know which words were heard at which scan times). Handles train/val/test splits and a simple delay between hearing and brain response. | `src/datasets/huth_fmri_dataset.py` |
 | **Training script** | Trains FMRIFlamingo: next-word prediction + optional “rank the right word” loss. Uses tricks like masking some text so the model can’t cheat and must use the brain. Saves checkpoints and does early stopping. | `scripts/train.py` |
 | **Telepathy ranking eval** | Evaluates “can the model pick the right word from 100 options using only brain data?” (no text clue). Reports Top-1, Top-5, Top-10 accuracy. | `scripts/evaluate_ranking_telepathy.py` |
+| **Blind ranking eval** | Same as telepathy ranking but **zeros out the fMRI** so the model only has the LLM prior. If accuracy stays high, the “brain” result was really the language prior. | `scripts/evaluate_ranking_blind.py` |
 | **Huth decoding pipeline** | The full Huth-style pipeline: (1) train encoding model “text → brain,” (2) train word-rate model for timing, (3) run beam-search decoder that scores sentences with that encoding model. | `decoding/` (train_EM.py, train_WR.py, run_decoder.py) |
 | **FMRIFlamingo decoder** | Same beam-search idea as Huth, but we score candidate sentences using FMRIFlamingo instead of the Huth encoding model. Lets us compare “Huth-style decoding” vs “FMRIFlamingo decoding” on the same stories. | `scripts/run_decoder_fmri_flamingo.py` |
 | **Parity evaluator** | Computes the same metrics as Huth (WER, BLEU, METEOR, BERTScore) on our own predictions (e.g. from FMRIFlamingo), so we can compare apples to apples. | `scripts/evaluate_huth_parity.py` |
@@ -90,7 +93,7 @@ Here’s what exists in the repo and what it’s for, in plain language.
 
 - **Trained FMRIFlamingo** on our Huth-style dataset (subjects 1–8). The model sees brain data + previous words and learns to predict the next word. We use fixed time windows (each “step” is one TR of brain data) and we mask 50% of the text sometimes so the model has to rely on the brain.
 
-- **Evaluated with ranking.** We ran “1-in-100” ranking: give the model 100 words, one of which is correct; can it score the correct one highest using only brain data (BOS-only prompt)? In **one documented run** (Run 5, best checkpoint, subject UTS03, story *avatar*, with 99 distractors from the same story) we got **42.86% Top-1** (way above the 1% you’d get by chance). That result is in EXPERIMENT.md; the eval script uses real fMRI and no text prompt, so there’s no answer leak. In **other** settings (e.g. different stories or evals) we’ve seen **0%**. So the model *can* use brain data to choose among words in at least one setup, but we’re still figuring out when it generalizes.
+- **Evaluated with ranking.** We ran “1-in-100” ranking: give the model 100 words, one of which is correct; can it score the correct one highest using only brain data (BOS-only prompt)? In one run (Run 5, UTS03, story *avatar*, 99 in-story distractors) we got **42.86% Top-1**. We then ran a **blind control** (`evaluate_ranking_blind.py`): same setup but **fMRI zeroed out**. Accuracy stayed similar, so the 42% is **attributable to the language prior** (LLM preferring plausible story words), not to decoding from brain data. In other settings we’ve seen ~0%. So we do *not* have solid evidence yet that the model uses fMRI for ranking; we need a control that shows a drop when fMRI is removed.
 
 - **Evaluated with generation.** We tried “generate the next word (or sentence) from brain + context.” Results were **very poor**—WER/BLEU near zero, lots of generic or wrong words. So at this stage we treat **ranking** as the more reliable way to measure whether the model is using brain data; generation is a harder task we’re working toward.
 
@@ -109,9 +112,9 @@ Here’s what exists in the repo and what it’s for, in plain language.
 ### FMRIFlamingo
 
 - **Ranking**
-  - **What we did:** 1-in-100 word choice using only brain data (BOS-only prompt). For the best result we used 1 correct word + 99 “in-story” distractors (other words from the same story, so the task is still hard).
-  - **What we got:** In **Run 5** (best checkpoint, subject UTS03, story *avatar*) we got **42.86% Top-1** (correct word ranked first). That’s way above chance (1%). The eval script does not leak the answer (same fMRI for all 100 candidates; no text beyond BOS). In other runs or stories we’ve seen **0%**.
-  - **What it means:** The model *can* use fMRI to pick the right word in at least this setup. It’s not consistent across stories/subjects yet. If you want to double-check before presenting, you can re-run `scripts/evaluate_ranking_telepathy.py` on that checkpoint with the same subject/story and confirm the number.
+  - **What we did:** 1-in-100 word choice using only brain data (BOS-only prompt), with 1 correct + 99 in-story distractors. We also ran a **blind control**: same eval but with the fMRI input **zeroed out** (`scripts/evaluate_ranking_blind.py`) to measure how much the LLM prior alone contributes.
+  - **What we got:** With real fMRI we saw **42.86% Top-1** in one run (Run 5, UTS03, *avatar*). In the **blind** condition (no fMRI signal), accuracy was **similar**. So the 42% is **not** evidence that the model uses brain data—it’s largely or solely the **language prior** (the LLM ranking words by story plausibility). In other evals we’ve seen ~0%.
+  - **What it means:** We cannot claim the model is decoding from fMRI based on that 42% result. To show fMRI use we need the blind condition to drop toward chance (e.g. ~1%) while the real-fMRI condition stays high. Next steps: strengthen training/alignment so that removing fMRI actually hurts ranking, and keep reporting blind controls.
 
 - **Generation (full sentences or next word)**
   - **What we did:** Ask the model to generate the next word or a sentence given brain data (and maybe previous words).
@@ -130,9 +133,9 @@ Here’s what exists in the repo and what it’s for, in plain language.
 ### Takeaway for the presentation
 
 - We have **two working pipelines**: FMRIFlamingo (train + rank + decode) and Huth (encode + decode + evaluate).
-- **Ranking** shows the model can use brain data in at least one setup (42.86% Top-1 on Run 5, UTS03, story *avatar*, 1-in-100 with in-story distractors; eval is BOS-only, no leak).
+- **Ranking:** We saw ~42% Top-1 in one setup, but a **blind control** (fMRI zeroed out) gave similar accuracy → the result is **due to the language prior**, not fMRI decoding. We do *not* have evidence yet that the model uses brain data for ranking; we need blind to drop toward chance.
 - **Generation** and **open decoding** are still weak for both our model and the Huth baseline on our data.
-- **Next step:** Run FMRIFlamingo decoding on the same test stories as Huth and compare side by side; optionally tighten Huth replication (same test story, null baselines) so the comparison is as fair as possible.
+- **Next step:** Run blind controls whenever we report ranking; improve training/alignment so that removing fMRI actually hurts performance; run FMRIFlamingo decoding on the same test stories as Huth and compare with the same metrics.
 
 ### Our results and experiments vs Huth (at a glance)
 
@@ -152,10 +155,10 @@ Here’s what exists in the repo and what it’s for, in plain language.
 | **BLEU-1** (higher better) | ~0.23–0.25 | Low | — | 0.00 |
 | **METEOR** (higher better) | ~0.16–0.17 | Low | — | ~0.0007 |
 | **BERTScore** (higher better) | ~0.81 | Relatively higher | — | ~0.62 |
-| **Top-1 accuracy** (1-in-100 ranking) | — | — | **42.86%** (chance 1%) | — |
-| **Top-5 / Top-10** | — | — | 42.86% / 54.29% | — |
+| **Top-1 accuracy** (1-in-100 ranking) | — | — | **42.86%** (but **blind ≈ same** → language prior) | — |
+| **Top-5 / Top-10** | — | — | 42.86% / 54.29% (blind control: similar) | — |
 
-**Notes:** (1) Huth’s numbers are from their paper (Table 1 / Fig. 1d); ours are from our runs (EXPERIMENT.md and Huth decoder evals). (2) Ranking (Top-1) is a *different* task than full-sentence decoding (WER/BLEU)—we don’t yet have FMRIFlamingo decoding on the same stories as Huth for a direct WER/BLEU comparison. (3) Our Huth pipeline on our data gives poor decoding (WER > 1), so the task is hard; we’re not yet doing a strict replication (e.g. same test story, null baselines).
+**Notes:** (1) Huth’s numbers are from their paper (Table 1 / Fig. 1d); ours are from our runs. (2) The **42% ranking is not evidence of fMRI use**: we ran a blind control (fMRI zeroed out) and got similar accuracy, so that result is **attributable to the language prior**. (3) Ranking (Top-1) is a different task than full-sentence decoding (WER/BLEU). (4) Our Huth pipeline on our data gives poor decoding (WER > 1); we’re not yet doing a strict replication.
 
 ---
 
