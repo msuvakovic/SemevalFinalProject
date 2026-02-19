@@ -23,7 +23,7 @@ dist/
 
 # Trained models and outputs (do not push; share via drive or re-run)
 checkpoints/
-models/
+/models/
 results/
 scores/
 logs/
