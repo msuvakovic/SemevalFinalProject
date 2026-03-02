@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import json
+import difflib
 
 import config
 from utils_ridge.stimulus_utils import TRFile, load_textgrids, load_simulated_trfiles
@@ -22,22 +23,80 @@ def get_stim(stories, features, tr_stats = None):
     """extract quantitative features of stimulus stories
     """
     word_seqs = get_story_wordseqs(stories)
-    word_vecs = {story : features.make_stim(word_seqs[story].data) for story in stories}
-    word_mat = np.vstack([word_vecs[story] for story in stories])
-    word_mean, word_std = word_mat.mean(0), word_mat.std(0)
-    
-    ds_vecs = {story : lanczosinterp2D(word_vecs[story], word_seqs[story].data_times, word_seqs[story].tr_times) 
-               for story in stories}
-    ds_mat = np.vstack([ds_vecs[story][5+config.TRIM:-config.TRIM] for story in stories])
-    if tr_stats is None: 
-        r_mean, r_std = ds_mat.mean(0), ds_mat.std(0)
+    missing = [story for story in stories if story not in word_seqs]
+    if missing:
+        available = sorted(word_seqs.keys())
+        lines = [
+            "Missing story keys in word sequences.",
+            f"Requested: {missing}",
+        ]
+        for story in missing:
+            suggestions = difflib.get_close_matches(story, available, n=3)
+            if suggestions:
+                lines.append(f"Closest available for '{story}': {suggestions}")
+        lines.append(
+            "Common causes: missing/broken TextGrid files (e.g., git-annex symlinks not fetched), "
+            "or story names absent from respdict.json."
+        )
+        raise KeyError(" ".join(lines))
+
+    if tr_stats is None:
+        word_sum = None
+        word_sumsq = None
+        word_count = 0
+        tr_sum = None
+        tr_sumsq = None
+        tr_count = 0
+
+        for story in stories:
+            word_vec = features.make_stim(word_seqs[story].data).astype(np.float32, copy = False)
+            if word_sum is None:
+                word_sum = word_vec.sum(0, dtype = np.float64)
+                word_sumsq = np.square(word_vec, dtype = np.float64).sum(0, dtype = np.float64)
+            else:
+                word_sum += word_vec.sum(0, dtype = np.float64)
+                word_sumsq += np.square(word_vec, dtype = np.float64).sum(0, dtype = np.float64)
+            word_count += word_vec.shape[0]
+
+            ds_vec = lanczosinterp2D(
+                word_vec, word_seqs[story].data_times, word_seqs[story].tr_times
+            ).astype(np.float32, copy = False)
+            trimmed = ds_vec[5 + config.TRIM : -config.TRIM]
+            if tr_sum is None:
+                tr_sum = trimmed.sum(0, dtype = np.float64)
+                tr_sumsq = np.square(trimmed, dtype = np.float64).sum(0, dtype = np.float64)
+            else:
+                tr_sum += trimmed.sum(0, dtype = np.float64)
+                tr_sumsq += np.square(trimmed, dtype = np.float64).sum(0, dtype = np.float64)
+            tr_count += trimmed.shape[0]
+
+        word_mean = (word_sum / word_count).astype(np.float32)
+        word_var = np.maximum(word_sumsq / word_count - np.square(word_mean, dtype = np.float32), 0)
+        word_std = np.sqrt(word_var, dtype = np.float32)
+
+        r_mean = (tr_sum / tr_count).astype(np.float32)
+        r_var = np.maximum(tr_sumsq / tr_count - np.square(r_mean, dtype = np.float32), 0)
+        r_std = np.sqrt(r_var, dtype = np.float32)
         r_std[r_std == 0] = 1
-    else: 
+    else:
         r_mean, r_std = tr_stats
-    ds_mat = np.nan_to_num(np.dot((ds_mat - r_mean), np.linalg.inv(np.diag(r_std))))
-    del_mat = make_delayed(ds_mat, config.STIM_DELAYS)
-    if tr_stats is None: return del_mat, (r_mean, r_std), (word_mean, word_std)
-    else: return del_mat
+        r_mean = np.asarray(r_mean, dtype = np.float32)
+        r_std = np.asarray(r_std, dtype = np.float32)
+
+    delayed = []
+    for story in stories:
+        word_vec = features.make_stim(word_seqs[story].data).astype(np.float32, copy = False)
+        ds_vec = lanczosinterp2D(
+            word_vec, word_seqs[story].data_times, word_seqs[story].tr_times
+        ).astype(np.float32, copy = False)
+        trimmed = ds_vec[5 + config.TRIM : -config.TRIM]
+        normed = np.nan_to_num((trimmed - r_mean) / r_std, copy = False)
+        delayed.append(make_delayed(normed, config.STIM_DELAYS).astype(np.float32, copy = False))
+
+    del_mat = np.vstack(delayed)
+    if tr_stats is None:
+        return del_mat, (r_mean, r_std), (word_mean, word_std)
+    return del_mat
 
 def predict_word_rate(resp, wt, vox, mean_rate):
     """predict word rate at each acquisition time

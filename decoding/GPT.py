@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from transformers import AutoModelForCausalLM
+from transformers import AutoModel, AutoModelForCausalLM
 from torch.nn.functional import softmax
 
 class GPT():    
@@ -8,7 +8,10 @@ class GPT():
     """
     def __init__(self, path, vocab=None, device = 'cpu'): 
         self.device = device
-        self.model = AutoModelForCausalLM.from_pretrained(path).eval().to(self.device)
+        self.path = path
+        # Hidden-state extraction does not need LM logits, so keep the lighter base model resident.
+        self.model = AutoModel.from_pretrained(path).eval().to(self.device)
+        self.lm_model = None
         
         if vocab is None:
             from transformers import AutoTokenizer
@@ -31,7 +34,7 @@ class GPT():
         """
         nctx = context_words + 1
         story_ids = self.encode(words)
-        story_array = np.zeros([len(story_ids), nctx]) + self.UNK_ID
+        story_array = np.full((len(story_ids), nctx), self.UNK_ID, dtype = np.int64)
         for i in range(len(story_array)):
             segment = story_ids[i:i+nctx]
             story_array[i, :len(segment)] = segment
@@ -55,8 +58,10 @@ class GPT():
     def get_probs(self, ids):
         """get next word probability distributions
         """
+        if self.lm_model is None:
+            self.lm_model = AutoModelForCausalLM.from_pretrained(self.path).eval().to(self.device)
         mask = torch.ones(ids.shape).int()
         with torch.no_grad():
-            outputs = self.model(input_ids = ids.to(self.device), attention_mask = mask.to(self.device))
+            outputs = self.lm_model(input_ids = ids.to(self.device), attention_mask = mask.to(self.device))
         probs = softmax(outputs.logits, dim = 2).detach().cpu().numpy()
         return probs

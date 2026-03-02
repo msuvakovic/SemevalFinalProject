@@ -27,7 +27,7 @@ Follow these steps in order. Every command is meant to be run from your **projec
 
 - **Python**: 3.10 or 3.11 (3.12 may work; we use 3.12 in dev).
 - **Git**: to clone the repo.
-- **Disk**: ~10 GB for code + env; **much more** if you download full Huth fMRI data (~100 GB). You can start with a subset.
+- **Disk**: ~10 GB for code + env; **much more** if you download full Huth fMRI data (~100 GB). You can start with a subset. (download dataset  https://openneuro.org/datasets/ds003020/versions/3.1.0)
 - **GPU**: Optional but recommended for training. CPU works for small runs and decoding.
 - **HuggingFace account**: Needed for the Llama model. Create one at https://huggingface.co/join.
 
