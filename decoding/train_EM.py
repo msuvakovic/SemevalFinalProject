@@ -2,6 +2,7 @@ import os
 import numpy as np
 import json
 import argparse
+from tqdm import tqdm
 
 import config
 from GPT import GPT
@@ -41,10 +42,14 @@ if __name__ == "__main__":
     print("Estimating encoding model...")
     rstim, tr_stats, word_stats = get_stim(stories, features)
     rresp = get_resp(args.subject, stories, stack = True)
+    print(f"rstim shape: {rstim.shape}, rresp shape: {rresp.shape}")
+    print(f"rresp mean: {rresp.mean():.4f}, std: {rresp.std():.4f}, per-voxel std range: {rresp.std(0).min():.3f}-{rresp.std(0).max():.3f}")
+
+    
     print(f"Stimulus shape: {rstim.shape}, Response shape: {rresp.shape}")
     
     nchunks = int(np.ceil(rresp.shape[0] / 5 / config.CHUNKLEN))
-    weights, alphas, bscorrs = bootstrap_ridge(rstim, rresp, use_corr = False, alphas = config.ALPHAS,
+    weights, alphas, bscorrs = bootstrap_ridge(rstim, rresp, use_corr = True, alphas = config.ALPHAS,
         nboots = config.NBOOTS, chunklen = config.CHUNKLEN, nchunks = nchunks)        
     bscorrs = bscorrs.mean(2).max(0)
     vox = np.sort(np.argsort(bscorrs)[-config.VOXELS:])
@@ -54,7 +59,7 @@ if __name__ == "__main__":
     stim_dict = {story : get_stim([story], features, tr_stats = tr_stats) for story in stories}
     resp_dict = get_resp(args.subject, stories, stack = False, vox = vox)
     noise_model = np.zeros([len(vox), len(vox)])
-    for hstory in stories:
+    for hstory in tqdm(stories, desc="Noise model"):
         tstim, hstim = np.vstack([stim_dict[tstory] for tstory in stories if tstory != hstory]), stim_dict[hstory]
         tresp, hresp = np.vstack([resp_dict[tstory] for tstory in stories if tstory != hstory]), resp_dict[hstory]
         bs_weights = ridge(tstim, tresp, alphas[vox])
@@ -69,4 +74,5 @@ if __name__ == "__main__":
     np.savez(os.path.join(save_location, "encoding_model_%s" % args.gpt),
         weights = weights, noise_model = noise_model, alphas = alphas, voxels = vox, stories = stories,
         test_stories = np.array(test_stories), val_stories = np.array(val_stories),
-        tr_stats = np.array(tr_stats), word_stats = np.array(word_stats))
+        tr_stats = np.array(tr_stats), word_stats = np.array(word_stats),
+        bscorrs = bscorrs)
