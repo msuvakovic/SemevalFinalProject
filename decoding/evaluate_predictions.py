@@ -14,6 +14,8 @@ if __name__ == "__main__":
     parser.add_argument("--metrics", nargs = "+", type = str, default = ["WER", "BLEU", "METEOR", "BERT"])
     parser.add_argument("--references", nargs = "+", type = str, default = [])
     parser.add_argument("--null", type = int, default = 10)
+    parser.add_argument("--pred-file", type = str, default = None,
+                        help = "Path to a custom prediction .npz (overrides default results/ lookup)")
     args = parser.parse_args()
     
     if len(args.references) == 0:
@@ -41,7 +43,7 @@ if __name__ == "__main__":
 
     # load language similarity metrics
     metrics = {}
-    if "WER" in args.metrics: metrics["WER"] = WER(use_score = True)
+    if "WER" in args.metrics: metrics["WER"] = WER(use_score = False)
     if "BLEU" in args.metrics: metrics["BLEU"] = BLEU(n = 1)
     if "METEOR" in args.metrics: metrics["METEOR"] = METEOR()
     if "BERT" in args.metrics:
@@ -55,7 +57,10 @@ if __name__ == "__main__":
             args.metrics = [m for m in args.metrics if m != "BERT"]
 
     # load prediction transcript
-    pred_path = os.path.join(config.RESULT_DIR, args.subject, args.experiment, args.task + ".npz")
+    if args.pred_file:
+        pred_path = args.pred_file
+    else:
+        pred_path = os.path.join(config.RESULT_DIR, args.subject, args.experiment, args.task + ".npz")
     pred_data = np.load(pred_path)
     pred_words, pred_times = pred_data["words"], pred_data["times"]
 
@@ -110,7 +115,12 @@ if __name__ == "__main__":
     print("Story-level scores:")
     for (ref, mname), vals in story_scores.items():
         if ref == args.task:
-            print(f"  {mname}: {np.array(vals).mean():.4f}")
+            raw = np.array(vals).mean()
+            if (ref, mname) in story_zscores and len(null_word_list) > 0:
+                z = story_zscores[(ref, mname)]
+                print(f"  {mname}: {raw:.4f}  (z={float(z):.2f})")
+            else:
+                print(f"  {mname}: {raw:.4f}")
 
     save_location = os.path.join(config.REPO_DIR, "scores", args.subject, args.experiment)
     os.makedirs(save_location, exist_ok = True)

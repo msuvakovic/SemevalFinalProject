@@ -12,7 +12,7 @@ def get_resp(subject, stories, stack = True, vox = None):
     for story in stories:
         resp_path = os.path.join(subject_dir, "%s.hf5" % story)
         hf = h5py.File(resp_path, "r")
-        resp[story] = np.nan_to_num(hf["data"][:])
+        resp[story] = np.nan_to_num(hf["data"][:]).astype(np.float32, copy=False)
         if vox is not None:
             resp[story] = resp[story][:, vox]
         hf.close()

@@ -51,7 +51,24 @@ class Decoder(object):
     def save(self, path):
         """save decoder results
         """
-        np.savez(path, words = np.array(self.beam[0].words), times = np.array(self.word_times))
+        tokens = self.beam[0].words
+        times = self.word_times
+        # merge BPE subword tokens into full words using </w> as word boundary
+        words, word_times = [], []
+        current, current_time = "", None
+        for token, t in zip(tokens, times):
+            if current_time is None:
+                current_time = t
+            if token.endswith("</w>"):
+                words.append(current + token[:-4])
+                word_times.append(current_time)
+                current, current_time = "", None
+            else:
+                current += token
+        if current:  # flush any remaining subword
+            words.append(current)
+            word_times.append(current_time)
+        np.savez(path, words=np.array(words), times=np.array(word_times))
         
 class Hypothesis(object):
     """a class for representing word sequence hypotheses

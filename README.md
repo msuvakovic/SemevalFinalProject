@@ -144,13 +144,13 @@ data/
 
 - **preprocessed_data**: one folder per subject (e.g. `UTS01`, `UTS02`), each containing one `.hf5` file per story.  
 - **TextGrids**: one `.TextGrid` per story (word-level transcripts and timing).  
-- **splits.json**: defines which stories are train / val / test per subject. If you don’t have it, see `decoding/splits.py` (ratio-based split) or `docs/HUTH_2023_REPLICATION_CHECKLIST.md`.
+- **splits.json**: defines which stories are train / val / test per subject. If you don’t have it, see `decoding/splits.py` (ratio-based split) or `docs/HUTH_2023_REPLICATION_CFull pipeline rerun. ~20 min for training + ~60-90 min for decoding.HECKLIST.md`.
 
 **5.3 – Point the code at the data**
 
 The project’s `config.py` and `decoding/config.py` expect data under `data/Huth/derivative/` relative to the **repository root**. So from your clone:
 
-- Repo root = directory that contains `data/`, `scripts/`, `config.py`.  
+- Repo root = directory that contains `data/`, `scripts/`, `config.py`.  244Project
 - Run all commands from this directory (e.g. `python scripts/train.py`).
 
 No extra environment variables are needed if the layout above is correct.
@@ -234,7 +234,7 @@ Use a **test** story (one that is **not** in the encoding model’s training set
 ```bash
 # Subjects UTS01–UTS03: test story "buck"
 python run_decoder.py --subject UTS01 --task buck --experiment perceived_speech
-
+experiment
 # Subjects UTS04–UTS08: test story "tildeath"
 python run_decoder.py --subject UTS04 --task tildeath --experiment perceived_speech
 ```

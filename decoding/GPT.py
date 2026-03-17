@@ -10,7 +10,7 @@ class GPT():
         self.device = device
         self.path = path
         # Hidden-state extraction does not need LM logits, so keep the lighter base model resident.
-        self.model = AutoModel.from_pretrained(path).eval().to(self.device)
+        self.model = torch.compile(AutoModel.from_pretrained(path).eval().half().to(self.device), dynamic=True)
         self.lm_model = None
         
         if vocab is None:
@@ -59,7 +59,7 @@ class GPT():
         """get next word probability distributions
         """
         if self.lm_model is None:
-            self.lm_model = AutoModelForCausalLM.from_pretrained(self.path).eval().to(self.device)
+            self.lm_model = torch.compile(AutoModelForCausalLM.from_pretrained(self.path).eval().half().to(self.device), dynamic=True)
         mask = torch.ones(ids.shape).int()
         with torch.no_grad():
             outputs = self.lm_model(input_ids = ids.to(self.device), attention_mask = mask.to(self.device))

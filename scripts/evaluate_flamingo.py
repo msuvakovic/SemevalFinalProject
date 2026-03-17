@@ -79,15 +79,24 @@ def generate_predictions(
         tokenizer.add_special_tokens({"pad_token": "<PAD>"})
         tokenizer.pad_token = "<PAD>"
     
+    # Read cross_attn setting from checkpoint config if available
+    ckpt_cross_attn = config_dict.get("CROSS_ATTN_EVERY_N_LAYERS", fmri_config.CROSS_ATTN_EVERY_N_LAYERS)
+    print(f"  cross_attn_every_n_layers: {ckpt_cross_attn} (from checkpoint)")
+
     # Initialize model
     model = FMRIFlamingo(
         device=device,
         llm_id=fmri_config.LLM_ID,
         num_rois=fmri_config.NUM_ROIS,
-        cross_attn_every_n_layers=fmri_config.CROSS_ATTN_EVERY_N_LAYERS,
-        gradient_checkpointing=False, # No need for checkpointing during inference
+        cross_attn_every_n_layers=ckpt_cross_attn,
+        gradient_checkpointing=False,
     )
-    model.load_state_dict(checkpoint["model_state_dict"])
+
+    # Strip duplicate-prefix keys (checkpoint may have both "model.*" and "llm.*")
+    state_dict = checkpoint["model_state_dict"]
+    model_keys = set(model.state_dict().keys())
+    filtered = {k: v for k, v in state_dict.items() if k in model_keys}
+    model.load_state_dict(filtered, strict=False)
     model.eval()
     model.to(device)
     
@@ -238,7 +247,141 @@ def generate_predictions(
         words=np.array(generated_words),
         times=np.array(generated_times)
     )
+
+    # Free model from GPU before BERTScore needs it
+    del model, checkpoint
+    torch.cuda.empty_cache()
+    import gc
+    gc.collect()
+
     print("✅ Done.")
+
+def evaluate_per_window(pred_file: Path, show_preds: bool = False):
+    """Per-window evaluation on direct generation output."""
+    print("\n--- Per-Window Evaluation ---")
+    data = np.load(pred_file, allow_pickle=True)
+    preds = data["words"]
+    refs = data["reference"]
+
+    n = len(preds)
+    assert len(refs) == n, f"Mismatch: {len(preds)} preds vs {len(refs)} refs"
+
+    # Exact match
+    exact = sum(1 for p, r in zip(preds, refs) if p == r)
+
+    # Content words (skip "sp" = silence, common function words)
+    function_words = {"a", "an", "the", "and", "or", "but", "in", "on", "at", "to",
+                      "for", "of", "with", "is", "was", "are", "were", "be", "been",
+                      "have", "has", "had", "do", "does", "did", "i", "you", "he",
+                      "she", "it", "we", "they", "my", "his", "her", "its", "our",
+                      "that", "this", "not", "so", "if", "up", "no", "just"}
+    content_preds = [(p, r) for p, r in zip(preds, refs) if r not in function_words and r != "sp"]
+    content_exact = sum(1 for p, r in content_preds if p == r)
+
+    # Silence detection
+    silence_refs = [(p, r) for p, r in zip(preds, refs) if r == "sp"]
+    silence_correct = sum(1 for p, r in silence_refs if p == "sp")
+
+    # Non-silence refs
+    speech_refs = [(p, r) for p, r in zip(preds, refs) if r != "sp"]
+    speech_exact = sum(1 for p, r in speech_refs if p == r)
+
+    # Per-word WER (1 - exact_match_rate for single words)
+    wer = 1.0 - exact / n
+
+    # Unique predictions
+    unique = len(set(preds))
+
+    # BERTScore (per-word)
+    try:
+        from bert_score import score as bert_score
+        valid = [(p if p else ".", r) for p, r in zip(preds, refs)]
+        p_list = [v[0] for v in valid]
+        r_list = [v[1] for v in valid]
+        P, R, F1 = bert_score(p_list, r_list, lang="en", verbose=False,
+                              device="cuda" if torch.cuda.is_available() else "cpu")
+        bert_f1 = F1.mean().item()
+        bert_available = True
+    except Exception as e:
+        print(f"  BERTScore skipped: {e}")
+        bert_f1 = None
+        bert_available = False
+
+    # BLEU (corpus-level: treat each word as a 1-token sequence)
+    try:
+        from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
+        bleu_refs = [[r.split()] for r in refs]   # list of list of list of tokens
+        bleu_hyps = [p.split() for p in preds]
+        smoother = SmoothingFunction().method1
+        bleu1 = corpus_bleu(bleu_refs, bleu_hyps, weights=(1, 0, 0, 0), smoothing_function=smoother)
+        bleu4 = corpus_bleu(bleu_refs, bleu_hyps, weights=(0.25, 0.25, 0.25, 0.25), smoothing_function=smoother)
+        bleu_available = True
+    except Exception as e:
+        print(f"  BLEU skipped: {e}")
+        bleu1 = bleu4 = None
+        bleu_available = False
+
+    # METEOR (average over windows)
+    try:
+        import nltk
+        try:
+            nltk.data.find("wordnet")
+        except LookupError:
+            nltk.download("wordnet", quiet=True)
+            nltk.download("omw-1.4", quiet=True)
+        from nltk.translate.meteor_score import single_meteor_score
+        meteor_scores = [single_meteor_score(r.split(), p.split()) for p, r in zip(preds, refs)]
+        meteor = float(np.mean(meteor_scores))
+        meteor_available = True
+    except Exception as e:
+        print(f"  METEOR skipped: {e}")
+        meteor = None
+        meteor_available = False
+
+    # Semantic near-misses (BERTScore > 0.8 but not exact match)
+    near_misses = []
+    if bert_available:
+        for i, (p, r) in enumerate(zip(preds, refs)):
+            if p != r and r != "sp" and p != "sp" and F1[i].item() > 0.8:
+                near_misses.append((i, r, p, F1[i].item()))
+
+    # Print results
+    print(f"\n  Total windows:           {n}")
+    print(f"  Exact match (overall):   {exact}/{n} ({100*exact/n:.1f}%)")
+    if len(speech_refs) > 0:
+        print(f"  Exact match (speech):    {speech_exact}/{len(speech_refs)} ({100*speech_exact/len(speech_refs):.1f}%)")
+    if len(content_preds) > 0:
+        print(f"  Exact match (content):   {content_exact}/{len(content_preds)} ({100*content_exact/len(content_preds):.1f}%)")
+    if len(silence_refs) > 0:
+        print(f"  Silence detection:       {silence_correct}/{len(silence_refs)} ({100*silence_correct/len(silence_refs):.1f}%)")
+    print(f"  Per-window WER:          {wer:.4f}")
+    if bert_available:
+        print(f"  BERTScore F1:            {bert_f1:.4f}")
+    if bleu_available:
+        print(f"  BLEU-1:                  {bleu1:.4f}")
+        print(f"  BLEU-4:                  {bleu4:.4f}")
+    if meteor_available:
+        print(f"  METEOR:                  {meteor:.4f}")
+    print(f"  Unique predictions:      {unique}/{n}")
+
+    if near_misses:
+        print(f"\n  Semantic near-misses (BERTScore > 0.8, not exact):")
+        for idx, ref, pred, bs in near_misses[:15]:
+            print(f"    win {idx:3d} | ref={ref:<15s} | pred={pred:<15s} | BERT={bs:.3f}")
+        if len(near_misses) > 15:
+            print(f"    ... and {len(near_misses)-15} more")
+
+    print("-" * 40)
+
+    if show_preds:
+        print(f"\n{'WIN':>4}  {'REF':<20}  {'PRED':<20}  {'MATCH':<5}  {'BERT':>6}")
+        print("-" * 60)
+        for i, (p, r) in enumerate(zip(preds, refs)):
+            match_str = "✓" if p == r else " "
+            bert_str = f"{F1[i].item():.3f}" if bert_available else "    -"
+            print(f"{i:>4}  {r:<20}  {p:<20}  {match_str:<5}  {bert_str:>6}")
+        print("-" * 60)
+
 
 def evaluate_metrics(subject_id: str, story_name: str):
     """Run Huth evaluation script."""
@@ -257,7 +400,7 @@ def evaluate_metrics(subject_id: str, story_name: str):
         "--subject", subject_id,
         "--experiment", "fmri_flamingo",
         "--task", story_name,
-        "--metrics", "WER", "BLEU", "METEOR", # Skip BERT for now if library missing
+        "--metrics", "WER", "BLEU", "METEOR", "BERT",
         "--null", "0" # Disable null model generation for speed/simplicity first
     ]
     
@@ -302,8 +445,17 @@ def main():
     parser.add_argument("--checkpoint", type=Path, default=FMRI_FLAMINGO_DIR / "checkpoints" / "best_checkpoint.pt")
     parser.add_argument("--subject", type=str, default="UTS03") # Use UTS03 for dev, UTS09 for test
     parser.add_argument("--story", type=str, default="avatar") # Use a held-out story (avatar is in test split)
+    parser.add_argument("--per-window", type=Path, default=None,
+                        help="Path to direct generation .npz for per-window eval (skips model loading)")
+    parser.add_argument("--show-preds", action="store_true",
+                        help="Print full side-by-side table of ref vs pred for each window (use with --per-window)")
     args = parser.parse_args()
-    
+
+    # Per-window only mode: skip model loading entirely
+    if args.per_window:
+        evaluate_per_window(args.per_window, show_preds=args.show_preds)
+        return
+
     # Check for leakage
     from src.datasets.huth_fmri_dataset import create_splits
     train_stories, _, _ = create_splits()
@@ -312,26 +464,19 @@ def main():
         print("   Consider using a held-out story like 'avatar'.\n")
     else:
         print(f"\n✅ Story '{args.story}' is held-out (not in training set).")
-    
+
     device = get_device()
-    
-    # Output directory matches Huth structure: results/subject/experiment/task.npz
-    # But Huth code looks in config.RESULT_DIR.
-    # We need to check decoding/config.py to see where RESULT_DIR is.
-    # Usually it is 'results/'.
-    
-    # Let's assume we output to brain-model-alignment/results/UTS0x/fmri_flamingo/story.npz
+
     output_dir = FMRI_FLAMINGO_DIR / "results" / args.subject / "fmri_flamingo"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"{args.story}.npz"
-    
+
     generate_predictions(args.checkpoint, args.subject, args.story, output_path, device)
-    
-    # Run eval
-    # Note: decoding/evaluate_predictions.py relies on decoding/config.py
-    # We need to make sure decoding/config.py points RESULT_DIR to our results folder.
-    # Or we just move the .npz to where it expects.
-    
+
+    torch.cuda.empty_cache()
+    import gc
+    gc.collect()
+
     evaluate_metrics(args.subject, args.story)
 
 if __name__ == "__main__":

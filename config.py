@@ -82,10 +82,10 @@ ATTN_IMPLEMENTATION = "sdpa"
 TOKENIZATION_STRATEGY = "roi"  # Start with ROI-based (simpler, interpretable)
 
 # ROI-based tokenization
-NUM_ROIS = 200  # Number of ROIs to use (reduces from ~50k voxels)
-ROI_SELECTION_METHOD = "all_voxels"  # Options: "anatomical", "learned", "random", "all_voxels"
-# Note: "anatomical" currently falls back to random in tokenizer, so we set "random" to be explicit.
-# If "all_voxels", use all voxels (no ROI reduction)
+NUM_ROIS = 2000  # 2k ROIs (averages ~40 voxels each for 81k voxels); all_voxels=~50k OOMs on 16GB
+ROI_SELECTION_METHOD = "anatomical"  # Options: "anatomical", "learned", "random", "all_voxels"
+# "anatomical" = deterministic seeded shuffle + contiguous blocks (reproducible, balanced ROI sizes)
+# "random" = random assignment (varies per run). "all_voxels" = no ROI reduction.
 
 # Spatiotemporal patch tokenization (alternative to ROI)
 PATCH_SIZE_TEMPORAL = 4  # TRs per patch
@@ -106,8 +106,8 @@ MAX_PATCHES = 120000  # Increased to 120k to support "all_voxels" (some subjects
 # • DROPOUT: 0.2 is moderate; 0.1 if underfitting, 0.3 if overfitting.
 # • LLM frozen in ORPO: only encoder + perceiver + gated_cross_attn train; unfreezing LLM (train.py LR_LLM) would need a separate run.
 # • CROSS_ATTN_GATE_INIT: 0 = vision path off at init (default Flamingo). 0.5 = start half-open so fMRI is used from step 1 (try if loss/acc stuck).
-CROSS_ATTN_EVERY_N_LAYERS = 1  # 1 = every decoder layer gets cross-attn to fMRI (max capacity to use signal)
-CROSS_ATTN_GATE_INIT = 0.0  # 0 = Flamingo default (vision path off at init). Set to 0.5 to start with vision path half-open.
+CROSS_ATTN_EVERY_N_LAYERS = 4  # 4 = cross-attn every 4th layer (4 injection points in 16-layer Llama-1B); 1 OOMs on 16GB
+CROSS_ATTN_GATE_INIT = 0.5  # 0.5 = vision path half-open from step 1 so fMRI encoder gets gradients immediately
 
 # TUNING: 0.5 often prevents loss from going down (encoder/cross-attn get too much dropout). Try 0.1–0.2 first.
 DROPOUT = 0.2  # Dropout probability for fMRI encoder and cross-attention
@@ -127,7 +127,7 @@ TEXT_MASKING_PROB = 0.5  # Mask 50% of text tokens to force fMRI dependency
 #   English words (avoids code/special tokens like sp.ArgumentParser, {BR}). Requires src.utils.word_vocab.
 RANKING_LOSS_WEIGHT = 0.5
 RESTRICT_GENERATION_TO_WORD_VOCAB = False
-RANKING_LOSS_FRAC = 0.5
+RANKING_LOSS_FRAC = 1  # Disabled: LLM unfrozen needs gradient memory, ranking OOMs
 NUM_RANKING_DISTRACTORS = 7  # 1 correct + 7 distractors = 8 candidates when batch_size=1
 RANKING_CHUNK_SIZE = 1  # Forward 1 candidate at a time to stay under GPU memory
 TELEPATHY_RANKING_FRAC = 1.0  # 1.0 = only Telepathy ranking (no prompt); 0.0 = only full-prompt ranking
@@ -142,15 +142,15 @@ ORPO_BETA = 0.1  # temperature in ORPO loss: -log σ(β * (log P(chosen) - log P
 # ============================================================================
 
 # Batch size (reduced for memory efficiency)
-BATCH_SIZE = 1  # Reduced from 4 to avoid OOM - use gradient accumulation instead
+BATCH_SIZE = 2  # Reduced from 4 to avoid OOM - use gradient accumulation instead
 GRADIENT_ACCUMULATION_STEPS = 4  # Effective batch size = BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS = 4
 
 # Learning rates
 # TUNING: Lower these (e.g. 5e-5) if loss is unstable or overfits quickly.
-LR_ENCODER = 1e-4  # Reduced from 2e-4
-LR_PROJECTOR = 1e-4  # Learning rate for projector (if using)
-LR_BASE = 1e-4  # Reduced from 2e-4
-LR_LLM = 0.0  # LLM backbone learning rate (0 = frozen)
+LR_ENCODER = 1e-4  # Restored: grad explosion was from pos_embed init, not LR
+LR_PROJECTOR = 2e-4  # Bumped: perceiver was starved (grad_norm=0.00)
+LR_BASE = 1e-4  # Base LR for cross-attn layers
+LR_LLM = 0.0  # Frozen: unfreezing caused LLM to memorize stories, not use fMRI
 LR_ORPO = 2e-5  # For train_telepathy_orpo.py. If avg loss creeps up over epoch, try 1e-5.
 
 # Training schedule
@@ -173,12 +173,12 @@ KEEP_N_CHECKPOINTS = 3  # Keep only last N checkpoints
 USE_GRADIENT_CHECKPOINTING = True  # Enable gradient checkpointing (trades compute for memory)
 USE_MIXED_PRECISION = True  # Use FP16/BF16 mixed precision training
 MIXED_PRECISION_DTYPE = "bf16"  # "bf16" (better) or "fp16" (more compatible)
-DATALOADER_NUM_WORKERS = 0  # Set to 0 to avoid memory issues with multiprocessing
+DATALOADER_NUM_WORKERS = 8  # Set to 0 to avoid memory issues with multiprocessing
 
 # Stability and observability (WSL2/OOM prevention)
 ENABLE_MEMORY_LOGGING = True  # Log memory usage to logs/metrics.jsonl
 MEMORY_LOG_INTERVAL = 10  # Log every N batches
-LOG_GRAD_NORMS_EVERY = 0  # Log encoder/perceiver grad norms every N optimizer steps (0=off). Use 100 when loss won't go down.
+LOG_GRAD_NORMS_EVERY = 100  # Log encoder/perceiver grad norms every 100 optimizer steps to verify fMRI path gets gradients
 ENABLE_SAFETY_STOP = False  # Safety stop if RSS exceeds threshold (default OFF, opt-in)
 SAFETY_STOP_RSS_GB = 12.0  # RSS threshold in GB (only used if ENABLE_SAFETY_STOP=True)
 

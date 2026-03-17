@@ -31,7 +31,11 @@ from typing import Optional, Dict, Any, List, Tuple
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from torch.optim import AdamW
+try:
+    from bitsandbytes.optim import AdamW8bit as AdamW
+except ImportError:
+    from torch.optim import AdamW
+
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
@@ -98,7 +102,7 @@ RESTRICT_GENERATION_TO_WORD_VOCAB = getattr(fmri_config, "RESTRICT_GENERATION_TO
 # Model parameters
 LLM_ID = getattr(fmri_config, "LLM_ID", "meta-llama/Llama-3.2-1B")
 NUM_ROIS = getattr(fmri_config, "NUM_ROIS", 200)
-CROSS_ATTN_EVERY_N_LAYERS = getattr(fmri_config, "CROSS_ATTN_EVERY_N_LAYERS", 1)
+CROSS_ATTN_EVERY_N_LAYERS = getattr(fmri_config, "CROSS_ATTN_EVERY_N_LAYERS", 4)
 USE_GRADIENT_CHECKPOINTING = getattr(fmri_config, "USE_GRADIENT_CHECKPOINTING", True)
 GRADIENT_CHECKPOINTING = getattr(fmri_config, "GRADIENT_CHECKPOINTING", USE_GRADIENT_CHECKPOINTING)
 
@@ -242,8 +246,12 @@ def load_checkpoint(
     checkpoint = torch.load(checkpoint_path, map_location=model.device)
     
     model.load_state_dict(checkpoint["model_state_dict"])
-    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-    scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+    try:
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+    except (ValueError, KeyError) as e:
+        print(f"⚠️  Optimizer/scheduler state mismatch (param groups changed), starting fresh: {e}")
+        print(f"   Model weights loaded successfully — only optimizer state is reset.")
     
     start_epoch = checkpoint["epoch"] + 1
     best_val_loss = checkpoint.get("val_loss", float("inf"))
@@ -285,17 +293,24 @@ def print_memory_stats(device: torch.device):
 def _log_grad_norms(model: FMRIFlamingo, step: int, epoch: int):
     """Log L2 grad norms for encoder and perceiver (diagnostic when loss won't go down)."""
     enc_sq, perc_sq = 0.0, 0.0
+    enc_parts = {}  # per-param breakdown
     for name, p in model.named_parameters():
         if p.grad is None or not p.requires_grad:
             continue
         g = p.grad.float().norm().item() ** 2
         if "vision_encoder" in name or "tokenizer" in name.lower():
             enc_sq += g
+            # Track top contributors
+            short_name = name.split(".")[-2] + "." + name.split(".")[-1] if "." in name else name
+            enc_parts[short_name] = g ** 0.5
         elif "perceiver" in name.lower():
             perc_sq += g
     enc_norm = enc_sq ** 0.5
     perc_norm = perc_sq ** 0.5
     tqdm.write(f"  [epoch {epoch} step {step}] grad_norm: encoder={enc_norm:.4f} perceiver={perc_norm:.4f}")
+    if enc_parts and enc_norm > 10:
+        top = sorted(enc_parts.items(), key=lambda x: -x[1])[:5]
+        tqdm.write(f"    encoder breakdown: {', '.join(f'{n}={v:.1f}' for n, v in top)}")
 
 
 # ============================================================================
@@ -310,10 +325,16 @@ def create_optimizer(model: FMRIFlamingo) -> torch.optim.Optimizer:
     base_params = []
     llm_params = []
     
+    # Freeze LLM backbone if not training it (saves ~11GB of unused gradients)
+    if LR_LLM == 0.0:
+        for name, param in model.named_parameters():
+            if "lang_encoder" in name and "gated_cross_attn_layer" not in name:
+                param.requires_grad = False
+
     for name, param in model.named_parameters():
         if not param.requires_grad:
             continue
-        
+
         if "vision_encoder" in name or "tokenizer" in name.lower():
             encoder_params.append(param)
         elif "projector" in name.lower() or "perceiver" in name.lower():
@@ -609,10 +630,11 @@ def train_epoch(
 
         # Update weights (every GRADIENT_ACCUMULATION_STEPS batches)
         if (batch_idx + 1) % GRADIENT_ACCUMULATION_STEPS == 0:
-            # Gradient clipping
+            # Gradient clipping — per param group so encoder can't starve perceiver
             if scaler is not None:
                 scaler.unscale_(optimizer)
-            clip_grad_norm_(model.parameters(), GRAD_CLIP_NORM)
+            for group in optimizer.param_groups:
+                clip_grad_norm_(group["params"], GRAD_CLIP_NORM)
 
             # Optional: log grad norms to confirm encoder/perceiver are updating (set LOG_GRAD_NORMS_EVERY in config)
             step_count = (batch_idx + 1) // GRADIENT_ACCUMULATION_STEPS
@@ -649,7 +671,8 @@ def train_epoch(
                 if rank_mean is not None:
                     if scaler is not None:
                         scaler.unscale_(optimizer)
-                    clip_grad_norm_(model.parameters(), GRAD_CLIP_NORM)
+                    for group in optimizer.param_groups:
+                        clip_grad_norm_(group["params"], GRAD_CLIP_NORM)
                     if scaler is not None:
                         scaler.step(optimizer)
                         scaler.update()
@@ -707,7 +730,8 @@ def train_epoch(
     if num_batches % GRADIENT_ACCUMULATION_STEPS != 0:
         if scaler is not None:
             scaler.unscale_(optimizer)
-        clip_grad_norm_(model.parameters(), GRAD_CLIP_NORM)
+        for group in optimizer.param_groups:
+            clip_grad_norm_(group["params"], GRAD_CLIP_NORM)
         if scaler is not None:
             scaler.step(optimizer)
             scaler.update()
@@ -816,10 +840,11 @@ def validate_generation(
             try:
                 # Generate (optionally restrict to English word tokens to avoid code/special tokens)
                 gen_kwargs = dict(
-                    max_new_tokens=10,
+                    max_new_tokens=1,
+                    num_beams=3,
                     do_sample=False,
                     temperature=1.0,
-                    repetition_penalty=1.2,
+                    no_repeat_ngram_size=2,
                 )
                 if allowed_token_ids is not None:
                     gen_kwargs["prefix_allowed_tokens_fn"] = (
@@ -905,7 +930,26 @@ def validate(
     except OverflowError:
         perplexity = float("inf")
     print(f"   Val Perplexity: {perplexity:.2f}")
-    
+
+    # --- Zero-fMRI ablation: re-run val with zeroed fMRI to check if brain signal matters ---
+    zero_running_loss = 0.0
+    zero_num_batches = 0
+    with torch.no_grad():
+        for batch in val_loader:
+            # Zero out fMRI data
+            if isinstance(batch, dict) and "time_series" in batch:
+                batch["time_series"] = [torch.zeros_like(ts) for ts in batch["time_series"]]
+            loss_zero = model.compute_loss(batch)
+            zero_running_loss += loss_zero.item()
+            zero_num_batches += 1
+    zero_avg_loss = zero_running_loss / zero_num_batches if zero_num_batches > 0 else 0.0
+    try:
+        zero_perplexity = torch.exp(torch.tensor(zero_avg_loss)).item()
+    except OverflowError:
+        zero_perplexity = float("inf")
+    print(f"   Zero-fMRI Val Loss: {zero_avg_loss:.4f} | Perplexity: {zero_perplexity:.2f}")
+    print(f"   fMRI contribution: {zero_avg_loss - avg_loss:.4f} loss difference ({zero_perplexity - perplexity:.2f} perplexity)")
+
     # Run generation validation if tokenizer is provided
     if tokenizer is not None:
         allowed_token_ids = None
@@ -949,6 +993,9 @@ def train(
     # Setup device
     if device is None:
         device = get_device()
+    if device.type == "cuda":
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
     print(f"🖥️  Using device: {device}")
     print_memory_stats(device)
     pin_memory = a100 and device.type == "cuda"
@@ -1015,7 +1062,7 @@ def train(
         return collated
     
     # Create data loaders (pin_memory + workers when --a100 for A100 80GB)
-    prefetch = 4 if num_workers > 0 else None
+    prefetch = 8 if num_workers > 0 else None
     
     # Ensure validation batch size is 1 for generation validation to work correctly
     # (Generation logic assumes batch_size=1 or needs complex padding handling)
@@ -1075,7 +1122,7 @@ def train(
     # Mixed precision scaler
     scaler = None
     if USE_MIXED_PRECISION and device.type == "cuda":
-        scaler = torch.cuda.amp.GradScaler()
+        scaler = torch.amp.GradScaler("cuda")
         print(f"✅ Mixed precision training enabled ({MIXED_PRECISION_DTYPE.upper()})")
     
     # Load checkpoint if resuming
@@ -1119,6 +1166,10 @@ def train(
         # Validate
         val_loss = validate(model, val_loader, device, epoch, tokenizer=tokenizer)
         
+        # Release H5 file handle buffers accumulated during this epoch
+        train_dataset.close_handles()
+        val_dataset.close_handles()
+
         # Log
         print(f"\nEpoch {epoch}/{NUM_EPOCHS}")
         print(f"   Train loss: {train_loss:.4f}")

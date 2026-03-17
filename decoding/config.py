@@ -21,7 +21,7 @@ NBOOTS = 15
 VOXELS = 10000
 CHUNKLEN = 40
 GPT_LAYER = 9
-GPT_WORDS = 5
+GPT_WORDS = 20
 
 # decoder parameters
 

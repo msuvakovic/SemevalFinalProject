@@ -81,8 +81,9 @@ if __name__ == "__main__":
     for story in stories:
         ds = wordseqs[story]
         words = DataSequence(np.ones(len(ds.data_times)), ds.split_inds, ds.data_times, ds.tr_times)
-        rates[story] = words.chunksums("lanczos", window = 3)
+        rates[story] = words.chunksums("lanczos", window = 1)
     nz_rate = np.concatenate([rates[story][5+config.TRIM:-config.TRIM] for story in stories], axis = 0)
+    print(f"Raw rate stats: min={nz_rate.min():.2f}, max={nz_rate.max():.2f}, mean={nz_rate.mean():.2f}")
     nz_rate = np.nan_to_num(nz_rate).reshape([-1, 1])
     mean_rate = np.mean(nz_rate)
     rate = nz_rate - mean_rate
@@ -92,10 +93,13 @@ if __name__ == "__main__":
         # Average voxels to create a single coherent timecourse
         # This makes regression instantaneous (N=1 instead of N=10000)
         resp = resp.mean(axis=1, keepdims=True)
-        
+        import numpy as np
+        m = np.load("models/UTS03/word_rate_model_auditory.npz", allow_pickle=True)
+        print("mean_rate:", m["mean_rate"])
+
         delresp = make_delayed(resp, config.RESP_DELAYS)
         nchunks = int(np.ceil(delresp.shape[0] / 5 / config.CHUNKLEN))    
-        weights, _, _ = bootstrap_ridge(delresp, rate, use_corr = False,
+        weights, _, _ = bootstrap_ridge(delresp, rate, use_corr = True,
             alphas = config.ALPHAS, nboots = config.NBOOTS, chunklen = config.CHUNKLEN, nchunks = nchunks)
         np.savez(os.path.join(save_location, "word_rate_model_%s" % roi), 
             weights = weights, mean_rate = mean_rate, voxels = vox[roi])

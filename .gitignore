@@ -18,7 +18,7 @@ raw_data
 upload_to_huggingface.py
 
 dist/
-
+*.hf5
 *.license
 
 # Trained models and outputs (do not push; share via drive or re-run)
@@ -27,3 +27,6 @@ checkpoints/
 results/
 scores/
 logs/
+data/Huth/derivative/preprocessed_data/*
+data/Huth/*
+Huth/*

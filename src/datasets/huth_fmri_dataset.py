@@ -448,7 +448,11 @@ class HuthFMRIDataset(Dataset):
                         else:
                             # No words aligned, skip this window
                             continue
-                        
+
+                        # Skip silence and TextGrid noise/artifact tokens
+                        if target_word == "sp" or target_word.startswith("{"):
+                            continue
+
                         context_text = " ".join(context_words)
                         target_text = target_word + self.EOS_TOKEN
                         
@@ -484,7 +488,19 @@ class HuthFMRIDataset(Dataset):
     def __len__(self) -> int:
         return len(self.samples)
     
-    def _get_fmri_data_cached(self, subject_id: str, story_name: str, 
+    def close_handles(self):
+        """Explicitly close all open H5 file handles and release their RAM buffers."""
+        for fh in getattr(self, '_h5_handles', {}).values():
+            try:
+                fh.close()
+            except Exception:
+                pass
+        self._h5_handles = {}
+
+    def __del__(self):
+        self.close_handles()
+
+    def _get_fmri_data_cached(self, subject_id: str, story_name: str,
                               tr_start: int, tr_end: int, voxels: Optional[np.ndarray]) -> np.ndarray:
         """
         Load fMRI data using cached file handle.

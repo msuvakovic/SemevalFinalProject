@@ -9,9 +9,9 @@ try:
 except ImportError:
     def tqdm(iterable, desc="", **kwargs):
         return iterable
-
+import torch
 import config
-from GPT import GPT
+from GPT import     GPT
 from Decoder import Decoder, Hypothesis
 from LanguageModel import LanguageModel
 from EncodingModel import EncodingModel
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     
     # predict word times
     word_rate = predict_word_rate(resp, word_rate_model["weights"], word_rate_model["voxels"], word_rate_model["mean_rate"])
+    print(f"Word rate: min={word_rate.min()}, max={word_rate.max()}, mean={word_rate.mean():.2f}, total words={word_rate.sum()}")
     if args.experiment == "perceived_speech": word_times, tr_times = predict_word_times(word_rate, resp, starttime = -10)
     else: word_times, tr_times = predict_word_times(word_rate, resp, starttime = 0)
     lanczos_mat = get_lanczos_mat(word_times, tr_times)
@@ -100,16 +101,65 @@ if __name__ == "__main__":
         trs = affected_trs(decoder.first_difference(), sample_index, lanczos_mat)
         ncontext = decoder.time_window(sample_index, config.LM_TIME, floor = 5)
         beam_nucs = lm.beam_propose(decoder.beam, ncontext)
+        # for c, (hyp, nextensions) in enumerate(decoder.get_hypotheses()):
+        #     nuc, logprobs = beam_nucs[c]
+        #     if len(nuc) < 1: continue
+        #     extend_words = [hyp.words + [x] for x in nuc]
+        #     extend_embs = list(features.extend(extend_words))
+        #     stim = sm.make_variants(sample_index, hyp.embs, extend_embs, trs)
+        #     # ldata/Huth/derivative/preprocessed_data/UTS03/naked.hf5ikelihoods = em.prs(stim, trs)
+        #     likelihoods = em.prs(stim, trs) 
+        #     local_extensions = [Hypothesis(parent = hyp, extension = x) for x in zip(nuc, logprobs, extend_embs)]
+        #     decoder.add_extensions(local_extensions, likelihoods, nextensions)
+
+        # --- BATCHED INNER LOOP (replace lines 103-112) ---
+
+        # 1. CPU: collect all extend_words across all hypotheses, track boundaries
+        all_extend_words = []
+        hyp_slices = []   # (start, end) index into all_extend_words per hypothesis
+        valid_hyps = []   # (hyp, nextensions, nuc, logprobs)
+
         for c, (hyp, nextensions) in enumerate(decoder.get_hypotheses()):
             nuc, logprobs = beam_nucs[c]
-            if len(nuc) < 1: continue
-            extend_words = [hyp.words + [x] for x in nuc]
-            extend_embs = list(features.extend(extend_words))
+            if len(nuc) < 1:
+                continue
+            start = len(all_extend_words)
+            all_extend_words.extend([hyp.words + [x] for x in nuc])
+            hyp_slices.append((start, len(all_extend_words)))
+            valid_hyps.append((hyp, nextensions, nuc, logprobs))
+
+        if not valid_hyps:
+            decoder.extend(verbose=False)
+            continue
+
+        # 2. GPU: ONE features.extend call for all hypotheses combined
+        all_embs = list(features.extend(all_extend_words))
+
+        # 3. GPU: make_variants still per-hypothesis (each has unique history)
+        #    but batch em.prs across all hypotheses in one shot
+        all_stims = []
+        stim_meta = []  # track (hyp, nextensions, nuc, logprobs, emb slice)
+
+        for (hyp, nextensions, nuc, logprobs), (s, e) in zip(valid_hyps, hyp_slices):
+            extend_embs = all_embs[s:e]
             stim = sm.make_variants(sample_index, hyp.embs, extend_embs, trs)
-            likelihoods = em.prs(stim, trs)
-            local_extensions = [Hypothesis(parent = hyp, extension = x) for x in zip(nuc, logprobs, extend_embs)]
+            all_stims.append(stim)
+            stim_meta.append((hyp, nextensions, nuc, logprobs, extend_embs))
+
+        # 4. GPU: ONE em.prs call for everything (all hypotheses × all nucleus words)
+        all_likelihoods = em.prs(torch.cat(all_stims, dim=0), trs)
+
+        # 5. CPU: distribute likelihoods back and add extensions
+        offset = 0
+        for (hyp, nextensions, nuc, logprobs, extend_embs) in stim_meta:
+            n = len(nuc)
+            likelihoods = all_likelihoods[offset:offset + n]
+            offset += n
+            local_extensions = [Hypothesis(parent=hyp, extension=x) 
+                                for x in zip(nuc, logprobs, extend_embs)]
             decoder.add_extensions(local_extensions, likelihoods, nextensions)
-        decoder.extend(verbose = False)
+
+        decoder.extend(verbose=False)
         
     if args.experiment in ["perceived_movie", "perceived_multispeaker"]: decoder.word_times += 10
     save_location = os.path.join(config.RESULT_DIR, args.subject, args.experiment)

@@ -33,13 +33,20 @@ def ridge(stim, resp, alpha, singcutoff=1e-10, normalpha=False):
     wt : array_like, shape (N, M)
         Linear regression weights.
     """
+    import torch
     try:
-        U,S,Vh = np.linalg.svd(stim, full_matrices=False)
-    except np.linalg.LinAlgError:
-        from text.regression.svd_dgesvd import svd_dgesvd
-        U,S,Vh = svd_dgesvd(stim, full_matrices=False)
+        U,S,Vh = torch.linalg.svd(torch.from_numpy(stim).cuda(), full_matrices=False)
+        U,S,Vh = U.cpu().numpy(), S.cpu().numpy(), Vh.cpu().numpy()
+    except Exception:
+        try:
+            U,S,Vh = np.linalg.svd(stim, full_matrices=False)
+        except np.linalg.LinAlgError:
+            from text.regression.svd_dgesvd import svd_dgesvd
+            U,S,Vh = svd_dgesvd(stim, full_matrices=False)
 
-    UR = np.dot(U.T, np.nan_to_num(resp))
+    U_t = torch.from_numpy(U).cuda()
+    UR_t = U_t.T @ torch.from_numpy(np.nan_to_num(resp)).cuda().float()
+
     
     # Expand alpha to a collection if it's just a single value
     if isinstance(alpha, (float,int)):
@@ -53,13 +60,23 @@ def ridge(stim, resp, alpha, singcutoff=1e-10, normalpha=False):
         nalphas = alpha
 
     # Compute weights for each alpha
+    # ualphas = np.unique(nalphas)
+    # wt = np.zeros((stim.shape[1], resp.shape[1]))
+    # for ua in ualphas:
+    #     selvox = np.nonzero(nalphas==ua)[0]
+    #     #awt = reduce(np.dot, [Vh.T, np.diag(S/(S**2+ua**2)), UR[:,selvox]])
+    #     awt = Vh.T.dot(np.diag(S/(S**2+ua**2))).dot(UR[:,selvox])
+    #     wt[:,selvox] = awt
     ualphas = np.unique(nalphas)
+    S_t = torch.from_numpy(S).cuda()
+    Vh_t = torch.from_numpy(Vh).cuda()
     wt = np.zeros((stim.shape[1], resp.shape[1]))
     for ua in ualphas:
         selvox = np.nonzero(nalphas==ua)[0]
-        #awt = reduce(np.dot, [Vh.T, np.diag(S/(S**2+ua**2)), UR[:,selvox]])
-        awt = Vh.T.dot(np.diag(S/(S**2+ua**2))).dot(UR[:,selvox])
-        wt[:,selvox] = awt
+        D_t = (S_t / (S_t**2 + float(ua)**2)).float()
+        awt = (Vh_t.T * D_t) @ UR_t[:, selvox].float()
+        wt[:,selvox] = awt.cpu().numpy()
+
 
     return wt
 
@@ -111,14 +128,21 @@ def ridge_corr(Rstim, Pstim, Rresp, Presp, alphas, normalpha=False, dtype=np.sin
         The correlation between each predicted response and each column of Presp for each alpha.
     
     """
+    import torch
+    device = torch.device("cuda")
+
     ## Calculate SVD of stimulus matrix
     logger.info("Doing SVD...")
     try:
-        U,S,Vh = np.linalg.svd(Rstim, full_matrices=False)
-    except np.linalg.LinAlgError as e:
-        logger.info("NORMAL SVD FAILED, trying more robust dgesvd..")
-        from text.regression.svd_dgesvd import svd_dgesvd
-        U,S,Vh = svd_dgesvd(Rstim, full_matrices=False)
+        U,S,Vh = torch.linalg.svd(torch.from_numpy(Rstim).to(device), full_matrices=False)
+        U,S,Vh = U.cpu().numpy(), S.cpu().numpy(), Vh.cpu().numpy()
+    except Exception:
+        logger.info("TORCH SVD FAILED, falling back to numpy...")
+        try:
+            U,S,Vh = np.linalg.svd(Rstim, full_matrices=False)
+        except np.linalg.LinAlgError:
+            from text.regression.svd_dgesvd import svd_dgesvd
+            U,S,Vh = svd_dgesvd(Rstim, full_matrices=False)
 
     ## Truncate tiny singular values for speed
     origsize = S.shape[0]
@@ -140,18 +164,33 @@ def ridge_corr(Rstim, Pstim, Rresp, Presp, alphas, normalpha=False, dtype=np.sin
         nalphas = alphas
 
     ## Precompute some products for speed
-    UR = np.dot(U.T, Rresp) ## Precompute this matrix product for speed
-    PVh = np.dot(Pstim, Vh.T) ## Precompute this matrix product for speed
-    
+    # UR = np.dot(U.T, Rresp) ## Precompute this matrix product for speed
+    # PVh = np.dot(Pstim, Vh.T) ## Precompute this matrix product for speed
+    CHUNK = 50000
+    U_t = torch.from_numpy(U).cuda()
+    Vh_t = torch.from_numpy(Vh).cuda()
+    Pstim_t = torch.from_numpy(Pstim).cuda()
+    PVh = (Pstim_t @ Vh_t.T).cpu().numpy()
+    PVh_t = torch.from_numpy(PVh).cuda().float()
+    UR = np.zeros((U.shape[1], Rresp.shape[1]), dtype=np.float32)
+    for i in range(0, Rresp.shape[1], CHUNK):
+        UR[:, i:i+CHUNK] = (U_t.T @ torch.from_numpy(Rresp[:, i:i+CHUNK]).cuda()).cpu().numpy()
+
     #Prespnorms = np.apply_along_axis(np.linalg.norm, 0, Presp) ## Precompute test response norms
     zPresp = zs(Presp)
     Prespvar = Presp.var(0)
     Rcorrs = [] ## Holds training correlations for each alpha
     for na, a in zip(nalphas, alphas):
-        #D = np.diag(S/(S**2+a**2)) ## Reweight singular vectors by the ridge parameter 
+        #D = np.diag(S/(S**2+a**2)) ## Reweight singular vectors by the ridge parameter
         D = S/(S**2+na**2) ## Reweight singular vectors by the (normalized?) ridge parameter
-        
-        pred = np.dot(mult_diag(D, PVh, left=False), UR) ## Best (1.75 seconds to prediction in test)
+
+        # pred = np.dot(mult_diag(D, PVh, left=False), UR) ## Best (1.75 seconds to prediction in test)
+        D_t = torch.from_numpy(D).cuda().float()
+        pred = np.zeros((PVh.shape[0], Rresp.shape[1]), dtype=np.float32)
+        for i in range(0, Rresp.shape[1], CHUNK):
+            UR_t = torch.from_numpy(UR[:, i:i+CHUNK]).cuda().float()
+            pred[:, i:i+CHUNK] = ((PVh_t * D_t) @ UR_t).cpu().numpy()
+
         # pred = np.dot(mult_diag(D, np.dot(Pstim, Vh.T), left=False), UR) ## Better (2.0 seconds to prediction in test)
         
         # pvhd = reduce(np.dot, [Pstim, Vh.T, D]) ## Pretty good (2.4 seconds to prediction in test)
@@ -291,14 +330,21 @@ def bootstrap_ridge(Rstim, Rresp, alphas, nboots, chunklen, nchunks, dtype=np.si
         Rcmats.append(Rcmat)
     
     ## Find weights for each voxel
-    try:
-        U,S,Vh = np.linalg.svd(Rstim, full_matrices=False)
-    except np.linalg.LinAlgError as e:
-        logger.info("NORMAL SVD FAILED, trying more robust dgesvd..")
-        from text.regression.svd_dgesvd import svd_dgesvd
-        U,S,Vh = svd_dgesvd(Rstim, full_matrices=False)
+    import torch
+    device = torch.device("cuda")
 
-    ## Normalize alpha by the Frobenius norm
+    ## Calculate SVD of stimulus matrix
+    logger.info("Doing SVD...")
+    try:
+        U,S,Vh = torch.linalg.svd(torch.from_numpy(Rstim).to(device), full_matrices=False)
+        U,S,Vh = U.cpu().numpy(), S.cpu().numpy(), Vh.cpu().numpy()
+    except Exception:
+        logger.info("TORCH SVD FAILED, falling back to numpy...")
+        try:
+            U,S,Vh = np.linalg.svd(Rstim, full_matrices=False)
+        except np.linalg.LinAlgError:
+            from text.regression.svd_dgesvd import svd_dgesvd
+            U,S,Vh = svd_dgesvd(Rstim, full_matrices=False)
     #frob = np.sqrt((S**2).sum()) ## Frobenius!
     frob = S[0]
     #frob = S.sum()
@@ -332,11 +378,23 @@ def bootstrap_ridge(Rstim, Rresp, alphas, nboots, chunklen, nchunks, dtype=np.si
         logger.info("Best alpha = %0.3f"%bestalpha)
 
     logger.info("Computing weights for each response using entire training set..")
-    UR = np.dot(U.T, np.nan_to_num(Rresp))
+    # UR = np.dot(U.T, np.nan_to_num(Rresp))
+    # wt = np.zeros((Rstim.shape[1], Rresp.shape[1]))
+    # for ai,alpha in enumerate(nalphas):
+    #     selvox = np.nonzero(valphas==alpha)[0]
+    #     awt = reduce(np.dot, [Vh.T, np.diag(S/(S**2+alpha**2)), UR[:,selvox]])
+    #     wt[:,selvox] = awt
+    CHUNK=50000
+    U_t, S_t, Vh_t = torch.from_numpy(U).cuda().float(), torch.from_numpy(S).cuda().float(), torch.from_numpy(Vh).cuda().float()
+    UR = np.zeros((U.shape[1], Rresp.shape[1]), dtype=np.float32)
+    for i in range(0, Rresp.shape[1], CHUNK):
+        UR[:, i:i+CHUNK] = (U_t.T @ torch.from_numpy(np.nan_to_num(Rresp[:, i:i+CHUNK])).cuda().float()).cpu().numpy()
     wt = np.zeros((Rstim.shape[1], Rresp.shape[1]))
     for ai,alpha in enumerate(nalphas):
         selvox = np.nonzero(valphas==alpha)[0]
-        awt = reduce(np.dot, [Vh.T, np.diag(S/(S**2+alpha**2)), UR[:,selvox]])
-        wt[:,selvox] = awt
+        if len(selvox) == 0: continue
+        D_t = (S_t / (S_t**2 + alpha**2)).float()
+        awt = (Vh_t.T * D_t) @ torch.from_numpy(UR[:,selvox]).cuda().float()
+        wt[:,selvox] = awt.cpu().numpy()
 
     return wt, valphas, allRcorrs

@@ -261,9 +261,17 @@ class FMRIFlamingo(nn.Module):
         # Remove gradient_checkpointing from flamingo_kwargs if present to avoid duplicate
         flamingo_kwargs.pop('gradient_checkpointing', None)
         
+        # Wrap encoder in nn.Module (not SimpleNamespace) so PyTorch discovers its parameters
+        class _VisionEncoderWrapper(nn.Module):
+            def __init__(self, visual):
+                super().__init__()
+                self.visual = visual
+            def forward(self, x):
+                return self.visual(x)
+
         # Create Flamingo model with custom fMRI encoder
         model = FMRIFlamingoWithTrainableEncoder(
-            SimpleNamespace(visual=time_series_encoder),
+            _VisionEncoderWrapper(time_series_encoder),
             lang_encoder,
             text_tokenizer.encode("<|endofchunk|>")[-1],
             text_tokenizer.encode("<image>")[-1],
@@ -588,26 +596,24 @@ class FMRIFlamingo(nn.Module):
         # Temporarily disable compilation to avoid data-dependent operation issues
         original_disable = torch._dynamo.config.disable
         torch._dynamo.config.disable = True
-        
+
         try:
             with torch.inference_mode():
                 input_ids, images, attention_mask, _ = self.pad_and_apply_batch(
                     batch, include_labels=False
                 )
-                
+
                 gen_ids = self.llm.generate(
                     vision_x=images,
                     lang_x=input_ids,
                     attention_mask=attention_mask,
                     max_new_tokens=max_new_tokens,
-                    # eos_token_id passed via generate_kwargs or default to None (let model config handle it)
-                    # We removed explicit eos_token_id here because it caused "multiple values" error
                     **generate_kwargs,
                 )
-                
+
                 # Remove input ids from generation
                 answer_only_ids = gen_ids[:, input_ids.shape[1] :]
-                
+
                 return self.text_tokenizer.batch_decode(
                     answer_only_ids, skip_special_tokens=True
                 )

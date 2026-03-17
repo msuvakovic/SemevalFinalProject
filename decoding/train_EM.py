@@ -54,7 +54,8 @@ if __name__ == "__main__":
     bscorrs = bscorrs.mean(2).max(0)
     vox = np.sort(np.argsort(bscorrs)[-config.VOXELS:])
     del rstim, rresp
-    
+    import torch; torch.cuda.empty_cache()
+
     # estimate noise model
     stim_dict = {story : get_stim([story], features, tr_stats = tr_stats) for story in stories}
     resp_dict = get_resp(args.subject, stories, stack = False, vox = vox)

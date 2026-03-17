@@ -1,0 +1,1365 @@
+Total: 1361 words
+
+   0 |     0.2s | sheelling
+   1 |     1.0s | hayden
+   2 |     1.4s | mona
+   3 |     1.8s | ishmael
+   4 |     2.2s | natty
+   5 |     2.6s | frayed
+   6 |     3.0s | flickered
+   7 |     3.4s | joan
+   8 |     3.8s | steaks
+   9 |     4.2s | marie
+  10 |     4.6s | ead
+  11 |     5.0s | lating
+  12 |     5.4s | tongued
+  13 |     5.8s | jai
+  14 |     6.2s | limping
+  15 |     6.6s | emi
+  16 |     7.0s | wafting
+  17 |     7.4s | downcast
+  18 |     7.8s | franks
+  19 |     8.2s | bethy
+  20 |     8.6s | blitdainty
+  21 |     9.4s | hayden
+  22 |     9.8s | mona
+  23 |    10.2s | skintight
+  24 |    10.6s | nightshirt
+  25 |    11.0s | ishmael
+  26 |    11.4s | sidetracked
+  27 |    11.8s | joan
+  28 |    12.2s | braydon
+  29 |    12.6s | marie
+  30 |    13.0s | natty
+  31 |    13.4s | jaunty
+  32 |    13.8s | mons
+  33 |    14.2s | stilted
+  34 |    14.6s | vikirnoff
+  35 |    15.0s | wafting
+  36 |    15.4s | jai
+  37 |    15.8s | vultures
+  38 |    16.2s | assholization
+  39 |    17.0s | tongued
+  40 |    17.4s | evanbarbedeirdre
+  41 |    18.6s | hayden
+  42 |    19.0s | ishmael
+  43 |    19.4s | murmurs
+  44 |    19.8s | joan
+  45 |    20.2s | mischievizing
+  46 |    21.0s | monotone
+  47 |    21.4s | mona
+  48 |    21.8s | awed
+  49 |    22.2s | downcast
+  50 |    22.6s | franks
+  51 |    23.0s | bethy
+  52 |    23.4s | boggling
+  53 |    23.8s | jingling
+  54 |    24.2s | goddamned
+  55 |    24.6s | ico
+  56 |    25.0s | tongued
+  57 |    25.4s | jai
+  58 |    25.8s | contribufantasize
+  59 |    26.6s | plying
+  60 |    27.0s | therabhaulate
+  61 |    28.2s | hayden
+  62 |    28.6s | marie
+  63 |    29.0s | asshoregis
+  64 |    29.8s | mona
+  65 |    30.2s | awed
+  66 |    30.6s | downcast
+  67 |    31.0s | tiptoes
+  68 |    31.4s | joan
+  69 |    31.8s | skintight
+  70 |    32.2s | jenner
+  71 |    32.6s | stilted
+  72 |    33.0s | ishmael
+  73 |    33.4s | wafting
+  74 |    33.8s | jai
+  75 |    34.2s | contribunora
+  76 |    35.0s | joneveting
+  77 |    35.8s | tongued
+  78 |    36.2s | therabhaulate
+  79 |    37.4s | hayden
+  80 |    37.8s | mona
+  81 |    38.2s | awed
+  82 |    38.6s | downcast
+  83 |    39.0s | franks
+  84 |    39.4s | joan
+  85 |    39.8s | izing
+  86 |    40.2s | privates
+  87 |    40.6s | ead
+  88 |    41.0s | ishmael
+  89 |    41.4s | natty
+  90 |    41.8s | skintight
+  91 |    42.2s | jenner
+  92 |    42.6s | jester
+  93 |    43.0s | asshoregis
+  94 |    43.8s | tongued
+  95 |    44.2s | tindwyl
+  96 |    44.6s | mons
+  97 |    45.0s | stilted
+  98 |    45.4s | fainted
+  99 |    45.8s | mona
+ 100 |    46.2s | awed
+ 101 |    46.6s | stills
+ 102 |    47.0s | sidetracked
+ 103 |    47.4s | downcast
+ 104 |    47.8s | cants
+ 105 |    48.2s | joan
+ 106 |    48.6s | icking
+ 107 |    49.0s | jai
+ 108 |    49.4s | d'albret
+ 109 |    49.8s | helstof
+ 110 |    50.2s | contribunora
+ 111 |    51.0s | vikirnoff
+ 112 |    51.4s | hayden
+ 113 |    51.8s | jaunty
+ 114 |    52.2s | tongued
+ 115 |    52.6s | ishmael
+ 116 |    53.0s | wafting
+ 117 |    53.4s | evan7alayna
+ 118 |    54.6s | dweller
+ 119 |    55.0s | stilted
+ 120 |    55.4s | lafleur
+ 121 |    55.8s | mona
+ 122 |    56.2s | underhanded
+ 123 |    56.6s | shrieking
+ 124 |    57.0s | joan
+ 125 |    57.4s | curtsied
+ 126 |    57.8s | marie
+ 127 |    58.2s | stills
+ 128 |    58.6s | contribunora
+ 129 |    59.4s | icking
+ 130 |    59.8s | vikirnoff
+ 131 |    60.2s | 9
+ 132 |    60.6s | tongued
+ 133 |    61.0s | ishmael
+ 134 |    61.4s | 95
+ 135 |    61.8s | hayden
+ 136 |    62.2s | jonehither
+ 137 |    63.0s | dismayed
+ 138 |    63.4s | downcast
+ 139 |    63.8s | brynna
+ 140 |    64.2s | mona
+ 141 |    64.6s | flickers
+ 142 |    65.0s | joan
+ 143 |    65.4s | stilted
+ 144 |    65.8s | lindsey
+ 145 |    66.2s | wafting
+ 146 |    66.6s | jai
+ 147 |    67.0s | contribunora
+ 148 |    67.8s | dweller
+ 149 |    68.2s | rueful
+ 150 |    68.6s | olympian
+ 151 |    69.0s | ishmael
+ 152 |    69.4s | vikirnoff
+ 153 |    69.8s | skintight
+ 154 |    70.2s | jester
+ 155 |    70.6s | hayden
+ 156 |    71.0s | tongued
+ 157 |    71.4s | downcast
+ 158 |    71.8s | franks
+ 159 |    72.2s | mona
+ 160 |    72.6s | jaunty
+ 161 |    73.0s | handyman
+ 162 |    73.4s | murmurs
+ 163 |    73.8s | joneeem
+ 164 |    74.6s | squinted
+ 165 |    75.0s | jai
+ 166 |    75.4s | ead
+ 167 |    75.8s | jobe
+ 168 |    76.2s | mons
+ 169 |    76.6s | nudge
+ 170 |    77.0s | asshoregis
+ 171 |    77.8s | wharkenna
+ 172 |    78.6s | vikirnoff
+ 173 |    79.0s | tumbled
+ 174 |    79.4s | joan
+ 175 |    79.8s | tongued
+ 176 |    80.2s | tiptoes
+ 177 |    80.6s | ishmael
+ 178 |    81.0s | curtsied
+ 179 |    81.4s | mona
+ 180 |    81.8s | stilted
+ 181 |    82.2s | 9
+ 182 |    82.6s | bossy
+ 183 |    83.0s | joshua
+ 184 |    83.4s | trod
+ 185 |    83.8s | downcast
+ 186 |    84.2s | franks
+ 187 |    84.6s | bethy
+ 188 |    85.0s | 75
+ 189 |    85.4s | kasey
+ 190 |    85.8s | wren
+ 191 |    86.2s | 95
+ 192 |    86.6s | zovastina
+ 193 |    87.0s | giddeon
+ 194 |    87.4s | purring
+ 195 |    87.8s | joan
+ 196 |    88.2s | grumbling
+ 197 |    88.6s | 12th
+ 198 |    89.0s | electrocuted
+ 199 |    89.4s | wafting
+ 200 |    89.8s | ishmael
+ 201 |    90.2s | hayden
+ 202 |    90.6s | tiptoeing
+ 203 |    91.0s | jai
+ 204 |    91.4s | satchel
+ 205 |    91.8s | dismayed
+ 206 |    92.2s | downcast
+ 207 |    92.6s | wailing
+ 208 |    93.0s | evankyle
+ 209 |    93.8s | mona
+ 210 |    94.2s | huffed
+ 211 |    94.6s | tongued
+ 212 |    95.0s | assholization
+ 213 |    95.8s | joan
+ 214 |    96.2s | skintight
+ 215 |    96.6s | jester
+ 216 |    97.0s | disserdeirdre
+ 217 |    97.8s | franks
+ 218 |    98.2s | ishmael
+ 219 |    98.6s | natty
+ 220 |    99.0s | eming
+ 221 |    99.4s | emed
+ 222 |    99.8s | plying
+ 223 |   100.2s | downcast
+ 224 |   100.6s | plucked
+ 225 |   101.0s | goddamned
+ 226 |   101.4s | bethy
+ 227 |   101.8s | mona
+ 228 |   102.2s | stilted
+ 229 |   102.6s | tongued
+ 230 |   103.0s | braydon
+ 231 |   103.4s | wafting
+ 232 |   103.8s | emi
+ 233 |   104.2s | joan
+ 234 |   104.6s | bouncy
+ 235 |   105.0s | cants
+ 236 |   105.4s | marie
+ 237 |   105.8s | grumbling
+ 238 |   106.2s | ishmael
+ 239 |   106.6s | hayden
+ 240 |   107.0s | sayin
+ 241 |   107.4s | privates
+ 242 |   107.8s | zack
+ 243 |   108.2s | eming
+ 244 |   108.6s | plying
+ 245 |   109.0s | downcast
+ 246 |   109.4s | plucked
+ 247 |   109.8s | goddamned
+ 248 |   110.2s | biscuit
+ 249 |   110.6s | tongued
+ 250 |   111.0s | rotted
+ 251 |   111.4s | limping
+ 252 |   111.8s | exhales
+ 253 |   112.2s | mona
+ 254 |   112.6s | stilted
+ 255 |   113.0s | bethy
+ 256 |   113.4s | huffed
+ 257 |   113.8s | marie
+ 258 |   114.2s | jessie
+ 259 |   114.6s | hayden
+ 260 |   115.0s | ishmael
+ 261 |   115.4s | joan
+ 262 |   115.8s | grumbling
+ 263 |   116.2s | evankyle
+ 264 |   117.0s | eming
+ 265 |   117.4s | plying
+ 266 |   117.8s | downcast
+ 267 |   118.2s | plucked
+ 268 |   118.6s | goddamned
+ 269 |   119.0s | enchanting
+ 270 |   119.4s | vey
+ 271 |   119.8s | tongued
+ 272 |   120.2s | olympian
+ 273 |   120.6s | mona
+ 274 |   121.0s | stilted
+ 275 |   121.4s | presumptuous
+ 276 |   121.8s | gina
+ 277 |   122.2s | rueful
+ 278 |   122.6s | jaunty
+ 279 |   123.0s | icking
+ 280 |   123.4s | brenanna
+ 281 |   124.2s | contribucontemwaned
+ 282 |   125.4s | joan
+ 283 |   125.8s | assholization
+ 284 |   126.6s | rossed
+ 285 |   127.0s | plying
+ 286 |   127.4s | franks
+ 287 |   127.8s | bethy
+ 288 |   128.2s | frazzled
+ 289 |   128.6s | ishmael
+ 290 |   129.0s | hayden
+ 291 |   129.4s | tongued
+ 292 |   129.8s | downcast
+ 293 |   130.2s | mona
+ 294 |   130.6s | stilted
+ 295 |   131.0s | legginin
+ 296 |   131.8s | judgmental
+ 297 |   132.2s | rotted
+ 298 |   132.6s | simplianterwaned
+ 299 |   133.8s | joan
+ 300 |   134.2s | assholization
+ 301 |   135.0s | contribunora
+ 302 |   135.8s | ī
+ 303 |   136.2s | jonedeirdre
+ 304 |   137.0s | șized
+ 305 |   137.8s | ishmael
+ 306 |   138.2s | wade
+ 307 |   138.6s | tongued
+ 308 |   139.0s | downcast
+ 309 |   139.4s | tylenol
+ 310 |   139.8s | mona
+ 311 |   140.2s | 14wobbling
+ 312 |   141.0s | evanchirping
+ 313 |   141.8s | joan
+ 314 |   142.2s | stilted
+ 315 |   142.6s | vikirnoff
+ 316 |   143.0s | inin
+ 317 |   143.4s | judgmental
+ 318 |   143.8s | physiloony
+ 319 |   144.6s | scientibhafranz
+ 320 |   145.8s | blandly
+ 321 |   146.2s | beldin
+ 322 |   146.6s | underhanded
+ 323 |   147.0s | ishmael
+ 324 |   147.4s | tongued
+ 325 |   147.8s | downcast
+ 326 |   148.2s | dantalion
+ 327 |   148.6s | contribunora
+ 328 |   149.4s | jonetrouser
+ 329 |   150.2s | mona
+ 330 |   150.6s | mons
+ 331 |   151.0s | fucner
+ 332 |   151.4s | vikirnoff
+ 333 |   151.8s | inin
+ 334 |   152.2s | wheezed
+ 335 |   152.6s | joan
+ 336 |   153.0s | ozzie
+ 337 |   153.4s | icking
+ 338 |   153.8s | franks
+ 339 |   154.2s | gina
+ 340 |   154.6s | laurel
+ 341 |   155.0s | wafting
+ 342 |   155.4s | ishmael
+ 343 |   155.8s | limping
+ 344 |   156.2s | biscuit
+ 345 |   156.6s | tongued
+ 346 |   157.0s | braydon
+ 347 |   157.4s | hickfingered
+ 348 |   158.2s | mona
+ 349 |   158.6s | stilted
+ 350 |   159.0s | shuttered
+ 351 |   159.4s | jai
+ 352 |   159.8s | vikirnoff
+ 353 |   160.2s | hayden
+ 354 |   160.6s | joan
+ 355 |   161.0s | grumbling
+ 356 |   161.4s | evand'albret
+ 357 |   162.2s | inin
+ 358 |   162.6s | underhanded
+ 359 |   163.0s | judgmental
+ 360 |   163.4s | gina
+ 361 |   163.8s | physiloony
+ 362 |   164.6s | tongued
+ 363 |   165.0s | tiptoes
+ 364 |   165.4s | ishmael
+ 365 |   165.8s | cussing
+ 366 |   166.2s | mona
+ 367 |   166.6s | icking
+ 368 |   167.0s | tacky
+ 369 |   167.4s | ī
+ 370 |   167.8s | bossy
+ 371 |   168.2s | linda
+ 372 |   168.6s | felimadly
+ 373 |   169.4s | marie
+ 374 |   169.8s | hayden
+ 375 |   170.2s | iming
+ 376 |   170.6s | downcast
+ 377 |   171.0s | cants
+ 378 |   171.4s | joan
+ 379 |   171.8s | skintight
+ 380 |   172.2s | gina
+ 381 |   172.6s | physiloony
+ 382 |   173.4s | tongued
+ 383 |   173.8s | olympian
+ 384 |   174.2s | ishmael
+ 385 |   174.6s | theatrically
+ 386 |   175.0s | ruthlessly
+ 387 |   175.4s | disconcerted
+ 388 |   175.8s | franks
+ 389 |   176.2s | evankyle
+ 390 |   177.0s | mona
+ 391 |   177.4s | stilted
+ 392 |   177.8s | rhonda
+ 393 |   178.2s | chrissie
+ 394 |   178.6s | wafting
+ 395 |   179.0s | emi
+ 396 |   179.4s | marie
+ 397 |   179.8s | 88
+ 398 |   180.2s | hayden
+ 399 |   180.6s | herst
+ 400 |   181.0s | izztylenol
+ 401 |   181.8s | giddeon
+ 402 |   182.2s | mons
+ 403 |   182.6s | vikirnoff
+ 404 |   183.0s | disilluscreejaunty
+ 405 |   184.2s | joneparticitablecloths
+ 406 |   185.4s | tongued
+ 407 |   185.8s | joan
+ 408 |   186.2s | ozzie
+ 409 |   186.6s | skintight
+ 410 |   187.0s | josephine
+ 411 |   187.4s | dived
+ 412 |   187.8s | lillie
+ 413 |   188.2s | ishmael
+ 414 |   188.6s | buoyed
+ 415 |   189.0s | franks
+ 416 |   189.4s | hayden
+ 417 |   189.8s | mona
+ 418 |   190.2s | stilted
+ 419 |   190.6s | monid'artagnyn
+ 420 |   191.4s | dantalion
+ 421 |   191.8s | nelson
+ 422 |   192.2s | inin
+ 423 |   192.6s | underhanded
+ 424 |   193.0s | vikirnoff
+ 425 |   193.4s | 9
+ 426 |   193.8s | tongued
+ 427 |   194.2s | glinting
+ 428 |   194.6s | emeralds
+ 429 |   195.0s | joan
+ 430 |   195.4s | mischievc'lund
+ 431 |   196.6s | oddity
+ 432 |   197.0s | mons
+ 433 |   197.4s | eavesdropping
+ 434 |   197.8s | ishmael
+ 435 |   198.2s | vultures
+ 436 |   198.6s | giddeon
+ 437 |   199.0s | petyr
+This means the beam search is collapsing onto a few high-scoring words that the Flamingo model 
+ 438 |   199.4s | opportune
+ 439 |   199.8s | hayden
+ 440 |   200.2s | jonedeirdre
+This means the beam search is collapsing onto a few high-scoring words that the Flamingo model 
+ 441 |   201.0s | herst
+ 442 |   201.4s | elling
+ 443 |   201.8s | izztylenol
+ 444 |   202.6s | tongued
+ 445 |   203.0s | wafting
+ 446 |   203.4s | joan
+ 447 |   203.8s | fingernails
+ 448 |   204.2s | skintight
+ 449 |   204.6s | cackle
+ 450 |   205.0s | accukyle
+ 451 |   205.8s | vikirnoff
+ 452 |   206.2s | mons
+ 453 |   206.6s | jaunty
+ 454 |   207.0s | ishmael
+ 455 |   207.4s | natty
+ 456 |   207.8s | murmurs
+ 457 |   208.2s | mona
+ 458 |   208.6s | stilted
+ 459 |   209.0s | raleigh
+ 460 |   209.4s | bristling
+ 461 |   209.8s | icking
+ 462 |   210.2s | jonedainty
+ 463 |   211.0s | braydon
+ 464 |   211.4s | hicklathered
+ 465 |   212.2s | downcast
+ 466 |   212.6s | joan
+ 467 |   213.0s | skintight
+ 468 |   213.4s | jester
+ 469 |   213.8s | hau75
+ 470 |   214.6s | tongued
+ 471 |   215.0s | ishmael
+ 472 |   215.4s | asshoregis
+ 473 |   216.2s | mona
+ 474 |   216.6s | stilted
+ 475 |   217.0s | franks
+ 476 |   217.4s | gina
+ 477 |   217.8s | ute
+ 478 |   218.2s | hayden
+ 479 |   218.6s | herst
+ 480 |   219.0s | izzmons
+ 481 |   219.8s | vikirnoff
+ 482 |   220.2s | jaunty
+ 483 |   220.6s | cants
+ 484 |   221.0s | joneloyed
+ 485 |   221.8s | eavesdropping
+ 486 |   222.2s | joan
+ 487 |   222.6s | cussing
+ 488 |   223.0s | tongued
+ 489 |   223.4s | wafting
+ 490 |   223.8s | asshohoun
+ 491 |   224.6s | chirping
+ 492 |   225.0s | icking
+ 493 |   225.4s | franks
+ 494 |   225.8s | mona
+ 495 |   226.2s | boggling
+ 496 |   226.6s | privates
+ 497 |   227.0s | bossy
+ 498 |   227.4s | rags
+ 499 |   227.8s | ishmael
+ 500 |   228.2s | mairi
+ 501 |   228.6s | vultures
+ 502 |   229.0s | muffling
+ 503 |   229.4s | downcast
+ 504 |   229.8s | goddamned
+ 505 |   230.2s | eavesdropping
+ 506 |   230.6s | 9
+ 507 |   231.0s | tongued
+ 508 |   231.4s | cants
+ 509 |   231.8s | asshohoun
+ 510 |   232.6s | baring
+ 511 |   233.0s | jingling
+ 512 |   233.4s | billy
+ 513 |   233.8s | i.e.
+ 514 |   234.2s | contribu75
+ 515 |   235.0s | bossy
+ 516 |   235.4s | ī
+ 517 |   235.8s | mons
+ 518 |   236.2s | ishmael
+ 519 |   236.6s | taverns
+ 520 |   237.0s | jonekyle
+ 521 |   237.8s | vikirnoff
+ 522 |   238.2s | hayden
+ 523 |   238.6s | judgmental
+ 524 |   239.0s | tongued
+ 525 |   239.4s | bruiser
+ 526 |   239.8s | asshohoun
+ 527 |   240.6s | icking
+ 528 |   241.0s | lindrossing
+ 529 |   241.8s | wafting
+ 530 |   242.2s | joan
+ 531 |   242.6s | monologue
+ 532 |   243.0s | evand'albret
+ 533 |   243.8s | mona
+ 534 |   244.2s | vultures
+ 535 |   244.6s | ishmael
+ 536 |   245.0s | șized
+ 537 |   245.8s | downcast
+ 538 |   246.2s | tylenol
+ 539 |   246.6s | dweller
+ 540 |   247.0s | halfheartedly
+ 541 |   247.4s | contribupaddock
+ 542 |   248.2s | asshoregis
+ 543 |   249.0s | inin
+ 544 |   249.4s | tongued
+ 545 |   249.8s | joneloyed
+ 546 |   250.6s | 9
+ 547 |   251.0s | bossy
+ 548 |   251.4s | ī
+ 549 |   251.8s | 95
+ 550 |   252.2s | wendmons
+ 551 |   253.0s | taverns
+ 552 |   253.4s | giddeon
+ 553 |   253.8s | hayden
+ 554 |   254.2s | fragrant
+ 555 |   254.6s | mona
+ 556 |   255.0s | flickers
+ 557 |   255.4s | joan
+ 558 |   255.8s | cussing
+ 559 |   256.2s | ishmael
+ 560 |   256.6s | d'albret
+ 561 |   257.0s | contribu75
+ 562 |   257.8s | vikirnoff
+ 563 |   258.2s | 77
+ 564 |   258.6s | sartek
+ 565 |   259.0s | ștylenol
+ 566 |   259.8s | daxel
+ 567 |   260.2s | dweller
+ 568 |   260.6s | jone95
+ 569 |   261.4s | 38
+ 570 |   261.8s | vultures
+ 571 |   262.2s | emeralds
+ 572 |   262.6s | asshobettina
+ 573 |   263.4s | giddeon
+ 574 |   263.8s | mons
+ 575 |   264.2s | underhanded
+ 576 |   264.6s | 9
+ 577 |   265.0s | hattie
+ 578 |   265.4s | disinfec75
+ 579 |   266.2s | tongued
+ 580 |   266.6s | skintight
+ 581 |   267.0s | jester
+ 582 |   267.4s | hayden
+ 583 |   267.8s | mona
+ 584 |   268.2s | jolts
+ 585 |   268.6s | joan
+ 586 |   269.0s | ishmael
+ 587 |   269.4s | natty
+ 588 |   269.8s | 77
+ 589 |   270.2s | dweller
+ 590 |   270.6s | 95
+ 591 |   271.0s | sartek
+ 592 |   271.4s | icky
+ 593 |   271.8s | disappomons
+ 594 |   272.6s | giddeon
+ 595 |   273.0s | joneeem
+ 596 |   273.8s | wendy
+ 597 |   274.2s | vikirnoff
+ 598 |   274.6s | vultures
+ 599 |   275.0s | tongued
+ 600 |   275.4s | downcast
+ 601 |   275.8s | franks
+ 602 |   276.2s | asshohoun
+ 603 |   277.0s | contribu75
+ 604 |   277.8s | ishmael
+ 605 |   278.2s | dweller
+ 606 |   278.6s | hayden
+ 607 |   279.0s | natty
+ 608 |   279.4s | 77
+ 609 |   279.8s | wafting
+ 610 |   280.2s | joan
+ 611 |   280.6s | șundercurrent
+ 612 |   281.4s | puppets
+ 613 |   281.8s | jone95
+ 614 |   282.6s | loch
+ 615 |   283.0s | 9
+ 616 |   283.4s | tongued
+ 617 |   283.8s | ī
+ 618 |   284.2s | vultures
+ 619 |   284.6s | asshohoun
+ 620 |   285.4s | vikirnoff
+ 621 |   285.8s | fucner
+ 622 |   286.2s | wendy
+ 623 |   286.6s | dweller
+ 624 |   287.0s | mons
+ 625 |   287.4s | 14wobbling
+ 626 |   288.2s | jumbled
+ 627 |   288.6s | 51
+ 628 |   289.0s | muslims
+ 629 |   289.4s | nudge
+ 630 |   289.8s | ishmael
+ 631 |   290.2s | giddeon
+ 632 |   290.6s | hayden
+ 633 |   291.0s | joan
+ 634 |   291.4s | grumbling
+ 635 |   291.8s | tongued
+ 636 |   292.2s | chirping
+ 637 |   292.6s | 95
+ 638 |   293.0s | asshohoun
+ 639 |   293.8s | petyr
+ 640 |   294.2s | scientitrod
+ 641 |   295.0s | jonedeirdre
+ 642 |   295.8s | ead
+ 643 |   296.2s | contribu75
+ 644 |   297.0s | vultures
+ 645 |   297.4s | 9
+ 646 |   297.8s | dweller
+ 647 |   298.2s | giddeon
+ 648 |   298.6s | hayden
+ 649 |   299.0s | blackmailing
+ 650 |   299.4s | unbuttoned
+ 651 |   299.8s | tongued
+ 652 |   300.2s | bossy
+ 653 |   300.6s | cants
+ 654 |   301.0s | 95
+ 655 |   301.4s | asshohoun
+ 656 |   302.2s | snarky
+ 657 |   302.6s | lindrossing
+ 658 |   303.4s | frederickd'albret
+ 659 |   304.2s | jonekeenly
+ 660 |   305.0s | fles
+ 661 |   305.4s | contribu75
+ 662 |   306.2s | vikirnoff
+ 663 |   306.6s | dweller
+ 664 |   307.0s | ishmael
+ 665 |   307.4s | joan
+ 666 |   307.8s | mischievgraciela
+ 667 |   308.6s | tongued
+ 668 |   309.0s | mona
+ 669 |   309.4s | șized
+ 670 |   310.2s | vultures
+ 671 |   310.6s | asshohoun
+ 672 |   311.4s | holltammie
+ 673 |   312.2s | 16wobbling
+ 674 |   313.0s | 9
+ 675 |   313.4s | eavesdropping
+ 676 |   313.8s | blackmailing
+ 677 |   314.2s | andrfiona
+ 678 |   315.0s | fragrant
+ 679 |   315.4s | cants
+ 680 |   315.8s | joan
+ 681 |   316.2s | dweller
+ 682 |   316.6s | giddeon
+ 683 |   317.0s | 95
+ 684 |   317.4s | joneveting
+ 685 |   318.2s | ishmael
+ 686 |   318.6s | șkaleb
+ 687 |   319.4s | ransacked
+ 688 |   319.8s | tongued
+ 689 |   320.2s | antechamber
+ 690 |   320.6s | asshohoun
+ 691 |   321.4s | vikirnoff
+ 692 |   321.8s | jaunty
+ 693 |   322.2s | mons
+ 694 |   322.6s | icking
+ 695 |   323.0s | contribufantasize
+ 696 |   323.8s | evankyle
+ 697 |   324.6s | trod
+ 698 |   325.0s | tiago
+ 699 |   325.4s | joan
+ 700 |   325.8s | disinfecwaned
+ 701 |   326.6s | joneloyed
+ 702 |   327.4s | 9
+ 703 |   327.8s | tongued
+ 704 |   328.2s | eavesdropping
+ 705 |   328.6s | ishmael
+ 706 |   329.0s | vultures
+ 707 |   329.4s | asshohoun
+ 708 |   330.2s | snarky
+ 709 |   330.6s | gina
+ 710 |   331.0s | cated
+ 711 |   331.4s | contribu75
+ 712 |   332.2s | lindrossing
+ 713 |   333.0s | felitiago
+ 714 |   333.8s | joan
+ 715 |   334.2s | icking
+ 716 |   334.6s | dweller
+ 717 |   335.0s | jonedainty
+ 718 |   335.8s | olympian
+ 719 |   336.2s | vikirnoff
+ 720 |   336.6s | 9
+ 721 |   337.0s | tongued
+ 722 |   337.4s | eavesdropping
+ 723 |   337.8s | 7
+ 724 |   338.2s | goddamned
+ 725 |   338.6s | redoubt
+ 726 |   339.0s | asshohoun
+ 727 |   339.8s | vultures
+ 728 |   340.2s | giddeon
+ 729 |   340.6s | dismayed
+ 730 |   341.0s | ishmael
+ 731 |   341.4s | evanwhips
+ 732 |   342.2s | joan
+ 733 |   342.6s | mona
+ 734 |   343.0s | 95
+ 735 |   343.4s | zovastina
+ 736 |   343.8s | dweller
+ 737 |   344.2s | rilundivided
+ 738 |   345.0s | tongued
+ 739 |   345.4s | haphazzzzdainty
+ 740 |   346.6s | joneeem
+ 741 |   347.4s | tiptoeing
+ 742 |   347.8s | jai
+ 743 |   348.2s | styrohelicopjaunty
+ 744 |   349.4s | ishmael
+ 745 |   349.8s | modiboutiulate
+ 746 |   351.0s | whareavesdropping
+ 747 |   351.8s | 9
+ 748 |   352.2s | bossy
+ 749 |   352.6s | ī
+ 750 |   353.0s | tongued
+ 751 |   353.4s | izzunderhanded
+ 752 |   354.2s | vikirnoff
+ 753 |   354.6s | physid'albret
+ 754 |   355.4s | giddeon
+ 755 |   355.8s | mons
+ 756 |   356.2s | vultures
+ 757 |   356.6s | 95
+ 758 |   357.0s | contribu75
+ 759 |   357.8s | asshohoun
+ 760 |   358.6s | jaunty
+ 761 |   359.0s | cants
+ 762 |   359.4s | unbuttoned
+ 763 |   359.8s | joan
+ 764 |   360.2s | mischievtylenol
+ 765 |   361.0s | tongued
+ 766 |   361.4s | eavesdropping
+ 767 |   361.8s | ishmael
+ 768 |   362.2s | vikirnoff
+ 769 |   362.6s | trod
+ 770 |   363.0s | jai
+ 771 |   363.4s | styrohelicopmodiboutiloyed
+ 772 |   365.4s | d'albret
+ 773 |   365.8s | jonejockizzunderhanded
+ 774 |   367.4s | vancha
+ 775 |   367.8s | dived
+ 776 |   368.2s | joan
+ 777 |   368.6s | assholization
+ 778 |   369.4s | tongued
+ 779 |   369.8s | ishmael
+ 780 |   370.2s | vikirnoff
+ 781 |   370.6s | inin
+ 782 |   371.0s | tylenol
+ 783 |   371.4s | 9
+ 784 |   371.8s | bossy
+ 785 |   372.2s | wafting
+ 786 |   372.6s | jai
+ 787 |   373.0s | vultures
+ 788 |   373.4s | giddeon
+ 789 |   373.8s | dweller
+ 790 |   374.2s | mons
+ 791 |   374.6s | fucner
+ 792 |   375.0s | wheezed
+ 793 |   375.4s | tiptoes
+ 794 |   375.8s | mona
+ 795 |   376.2s | braydon
+ 796 |   376.6s | 75
+ 797 |   377.0s | electrocuted
+ 798 |   377.4s | tongued
+ 799 |   377.8s | goosebumps
+ 800 |   378.2s | ishmael
+ 801 |   378.6s | sidetracked
+ 802 |   379.0s | inaudible
+ 803 |   379.4s | engorged
+ 804 |   379.8s | 9
+ 805 |   380.2s | bossy
+ 806 |   380.6s | asshostrobe
+ 807 |   381.4s | joan
+ 808 |   381.8s | giddeon
+ 809 |   382.2s | rilundivided
+ 810 |   383.0s | dismayed
+ 811 |   383.4s | joneeem
+ 812 |   384.2s | mona
+ 813 |   384.6s | nelson
+ 814 |   385.0s | achilles
+ 815 |   385.4s | contribugargomons
+ 816 |   386.6s | ishmael
+ 817 |   387.0s | vikirnoff
+ 818 |   387.4s | agonizingly
+ 819 |   387.8s | gouged
+ 820 |   388.2s | downcast
+ 821 |   388.6s | tongued
+ 822 |   389.0s | asshohoun
+ 823 |   389.8s | vultures
+ 824 |   390.2s | joan
+ 825 |   390.6s | 198giddeon
+ 826 |   391.4s | jonedeirdre
+ 827 |   392.2s | honi
+ 828 |   392.6s | dweller
+ 829 |   393.0s | tylenol
+ 830 |   393.4s | skintight
+ 831 |   393.8s | trombtial
+ 832 |   394.6s | josephine
+ 833 |   395.0s | d'albret
+ 834 |   395.4s | cryptic
+ 835 |   395.8s | bublanski
+ 836 |   396.2s | cated
+ 837 |   396.6s | ishmael
+ 838 |   397.0s | underhanded
+ 839 |   397.4s | asshoregis
+ 840 |   398.2s | vikirnoff
+ 841 |   398.6s | 9
+ 842 |   399.0s | tongued
+ 843 |   399.4s | eavesdropping
+ 844 |   399.8s | 2wriggling
+ 845 |   400.6s | joan
+ 846 |   401.0s | vultures
+ 847 |   401.4s | 95
+ 848 |   401.8s | zovastina
+ 849 |   402.2s | joneeem
+ 850 |   403.0s | giddeon
+ 851 |   403.4s | dweller
+ 852 |   403.8s | rilundivided
+ 853 |   404.6s | nicolette
+ 854 |   405.0s | fragrant
+ 855 |   405.4s | 90
+ 856 |   405.8s | contribufantasize
+ 857 |   406.6s | evanorchids
+ 858 |   407.4s | ishmael
+ 859 |   407.8s | 9
+ 860 |   408.2s | underhanded
+ 861 |   408.6s | accursed
+ 862 |   409.0s | lallybroch
+ 863 |   409.4s | asshobettina
+ 864 |   410.2s | 95
+ 865 |   410.6s | marietta
+ 866 |   411.0s | vikirnoff
+ 867 |   411.4s | disappomons
+ 868 |   412.2s | jaunty
+ 869 |   412.6s | vultures
+ 870 |   413.0s | giddeon
+ 871 |   413.4s | jonedeirdre
+ 872 |   414.2s | 57
+ 873 |   414.6s | tongued
+ 874 |   415.0s | skintight
+ 875 |   415.4s | cants
+ 876 |   415.8s | joan
+ 877 |   416.2s | ștylenol
+ 878 |   417.0s | tiptoeing
+ 879 |   417.4s | evanorchids
+ 880 |   418.2s | mona
+ 881 |   418.6s | reginald
+ 882 |   419.0s | herst
+ 883 |   419.4s | izzmons
+ 884 |   420.2s | vikirnoff
+ 885 |   420.6s | roni
+ 886 |   421.0s | kelly
+ 887 |   421.4s | jaunty
+ 888 |   421.8s | joneparticid'artagnyn
+ 889 |   423.0s | tongued
+ 890 |   423.4s | unwavering
+ 891 |   423.8s | underhanded
+ 892 |   424.2s | vancha
+ 893 |   424.6s | dived
+ 894 |   425.0s | lillie
+ 895 |   425.4s | vultures
+ 896 |   425.8s | joan
+ 897 |   426.2s | stilted
+ 898 |   426.6s | contribufantasize
+ 899 |   427.4s | ishmael
+ 900 |   427.8s | sidetracked
+ 901 |   428.2s | inaudible
+ 902 |   428.6s | icking
+ 903 |   429.0s | wafting
+ 904 |   429.4s | evankyle
+ 905 |   430.2s | mona
+ 906 |   430.6s | inin
+ 907 |   431.0s | tongued
+ 908 |   431.4s | downcast
+ 909 |   431.8s | franks
+ 910 |   432.2s | asshohoun
+ 911 |   433.0s | piling
+ 912 |   433.4s | jai
+ 913 |   433.8s | joan
+ 914 |   434.2s | disilluscreetusspamphlets
+ 915 |   435.8s | ishmael
+ 916 |   436.2s | theatrically
+ 917 |   436.6s | inger
+ 918 |   437.0s | contribunora
+ 919 |   437.8s | chimaera
+ 920 |   438.2s | hayden
+ 921 |   438.6s | jonedainty
+ 922 |   439.4s | tongued
+ 923 |   439.8s | downcast
+ 924 |   440.2s | asshohoun
+ 925 |   441.0s | skintight
+ 926 |   441.4s | d'albret
+ 927 |   441.8s | cated
+ 928 |   442.2s | mona
+ 929 |   442.6s | stilted
+ 930 |   443.0s | 9
+ 931 |   443.4s | bossy
+ 932 |   443.8s | eavesdropping
+ 933 |   444.2s | joan
+ 934 |   444.6s | 88
+ 935 |   445.0s | contribunora
+ 936 |   445.8s | 95
+ 937 |   446.2s | icking
+ 938 |   446.6s | vikirnoff
+ 939 |   447.0s | handcuffed
+ 940 |   447.4s | ishmael
+ 941 |   447.8s | vultures
+ 942 |   448.2s | asshohoun
+ 943 |   449.0s | jaunty
+ 944 |   449.4s | cants
+ 945 |   449.8s | mons
+ 946 |   450.2s | murmurdeirdre
+ 947 |   450.8s | bublanski
+ 948 |   451.2s | giddeon
+ 949 |   451.5s | dweller
+ 950 |   451.8s | tongued
+ 951 |   452.2s | skintight
+ 952 |   452.6s | ò
+ 953 |   453.0s | eavesdropping
+ 954 |   453.4s | joan
+ 955 |   453.8s | fingernails
+ 956 |   454.2s | icking
+ 957 |   454.6s | unwavering
+ 958 |   455.0s | contribuapprecielling
+ 959 |   456.2s | ishmael
+ 960 |   456.6s | revolting
+ 961 |   457.0s | asshoregis
+ 962 |   457.8s | hayden
+ 963 |   458.2s | marie
+ 964 |   458.6s | iteuprooted
+ 965 |   459.4s | franks
+ 966 |   459.8s | gina
+ 967 |   460.2s | vikirnoff
+ 968 |   460.6s | tongued
+ 969 |   461.0s | downcast
+ 970 |   461.4s | joan
+ 971 |   461.8s | stilted
+ 972 |   462.2s | mona
+ 973 |   462.6s | șized
+ 974 |   463.4s | halfheartedly
+ 975 |   463.8s | joneloyed
+ 976 |   464.6s | fainted
+ 977 |   465.0s | ishmael
+ 978 |   465.4s | skintight
+ 979 |   465.8s | jester
+ 980 |   466.2s | asshocampaigablaze
+ 981 |   467.4s | marie
+ 982 |   467.8s | d'albret
+ 983 |   468.2s | hayden
+ 984 |   468.6s | tongued
+ 985 |   469.0s | downcast
+ 986 |   469.4s | modidrowsy
+ 987 |   470.2s | physiloony
+ 988 |   471.0s | wafting
+ 989 |   471.4s | evanforties
+ 990 |   472.2s | joan
+ 991 |   472.6s | fidgeting
+ 992 |   473.0s | ishmael
+ 993 |   473.4s | skintight
+ 994 |   473.8s | flickered
+ 995 |   474.2s | emi
+ 996 |   474.6s | mona
+ 997 |   475.0s | vultures
+ 998 |   475.4s | asshooakley
+ 999 |   476.2s | hayden
+1000 |   476.6s | tongued
+1001 |   477.0s | downcast
+1002 |   477.4s | modiǽ
+1003 |   478.2s | shimmering
+1004 |   478.6s | 14flopping
+1005 |   479.4s | vikirnoff
+1006 |   479.8s | wafting
+1007 |   480.2s | joan
+1008 |   480.6s | limping
+1009 |   481.0s | groused
+1010 |   481.4s | jonehila
+1011 |   482.2s | jobe
+1012 |   482.6s | mona
+1013 |   483.0s | braydon
+1014 |   483.4s | asshotrecconversed
+1015 |   484.6s | evanishmael
+1016 |   485.4s | skintight
+1017 |   485.8s | jester
+1018 |   486.2s | i.e.
+1019 |   486.6s | haphazzzzdainty
+1020 |   487.8s | tongued
+1021 |   488.2s | handicapped
+1022 |   488.6s | vey
+1023 |   489.0s | herst
+1024 |   489.4s | subterranean
+1025 |   489.8s | physiloony
+1026 |   490.6s | wendyorforties
+1027 |   491.8s | jonehooted
+1028 |   492.6s | nibbles
+1029 |   493.0s | asshoregis
+1030 |   493.8s | roni
+1031 |   494.2s | hollkneaded
+1032 |   495.0s | downcast
+1033 |   495.4s | tylenol
+1034 |   495.8s | tongued
+1035 |   496.2s | 9
+1036 |   496.6s | bossy
+1037 |   497.0s | cants
+1038 |   497.4s | ishmael
+1039 |   497.8s | natty
+1040 |   498.2s | icky
+1041 |   498.6s | dismayed
+1042 |   499.0s | mona
+1043 |   499.4s | icking
+1044 |   499.8s | jonekeenly
+1045 |   500.6s | hollis
+1046 |   501.0s | creaking
+1047 |   501.4s | kasey
+1048 |   501.8s | 50
+1049 |   502.2s | electrocuted
+1050 |   502.6s | murmurs
+1051 |   503.0s | joan
+1052 |   503.4s | 95
+1053 |   503.8s | contribufantasize
+1054 |   504.6s | evankyle
+1055 |   505.4s | ishmael
+1056 |   505.8s | tongued
+1057 |   506.2s | downcast
+1058 |   506.6s | wafting
+1059 |   507.0s | lolling
+1060 |   507.4s | sputtering
+1061 |   507.8s | jingling
+1062 |   508.2s | goddamned
+1063 |   508.6s | i.e.
+1064 |   509.0s | huffed
+1065 |   509.4s | bossy
+1066 |   509.8s | icking
+1067 |   510.2s | mona
+1068 |   510.6s | vultures
+1069 |   511.0s | asshohoun
+1070 |   511.8s | jonedeirdre
+1071 |   512.6s | yelcaemons
+1072 |   513.8s | holltammie
+1073 |   514.6s | tongued
+1074 |   515.0s | eavesdropping
+1075 |   515.4s | gina
+1076 |   515.8s | trotting
+1077 |   516.2s | groused
+1078 |   516.6s | evanforties
+1079 |   517.4s | ishmael
+1080 |   517.8s | hayden
+1081 |   518.2s | domed
+1082 |   518.6s | downcast
+1083 |   519.0s | joan
+1084 |   519.4s | skintight
+1085 |   519.8s | stilted
+1086 |   520.2s | abraclaudette
+1087 |   521.0s | mona
+1088 |   521.4s | dispohooted
+1089 |   522.2s | judgmental
+1090 |   522.6s | modiǽ
+1091 |   523.4s | wafting
+1092 |   523.8s | contribuappreciyeadallas
+1093 |   525.4s | ishmael
+1094 |   525.8s | disilluscreekristen
+1095 |   527.0s | hayden
+1096 |   527.4s | tongued
+1097 |   527.8s | downcast
+1098 |   528.2s | izing
+1099 |   528.6s | physiloony
+1100 |   529.4s | olympian
+1101 |   529.8s | scientipoignunderhanded
+1102 |   531.0s | asshotrecsubterranean
+1103 |   532.2s | haphazzzzjaunty
+1104 |   533.4s | contribuappreciimpromptu
+1105 |   534.6s | jonekeenly
+1106 |   535.4s | loyed
+1107 |   535.8s | mons
+1108 |   536.2s | tongued
+1109 |   536.6s | downcast
+1110 |   537.0s | izing
+1111 |   537.4s | evanlucid
+1112 |   538.2s | physiloony
+1113 |   539.0s | yankees
+1114 |   539.4s | mona
+1115 |   539.8s | sidetracked
+1116 |   540.2s | ishmael
+1117 |   540.6s | joan
+1118 |   541.0s | asshoregis
+1119 |   541.8s | hayden
+1120 |   542.2s | contribunora
+1121 |   543.0s | disinfecwaned
+1122 |   543.8s | joneloyed
+1123 |   544.6s | glinting
+1124 |   545.0s | wafting
+1125 |   545.4s | modiǽ
+1126 |   546.2s | mons
+1127 |   546.6s | skintight
+1128 |   547.0s | jester
+1129 |   547.4s | tongued
+1130 |   547.8s | downcast
+1131 |   548.2s | jacking
+1132 |   548.6s | tylenol
+1133 |   549.0s | ishmael
+1134 |   549.4s | sidetracked
+1135 |   549.8s | joan
+1136 |   550.2s | jittery
+1137 |   550.6s | mona
+1138 |   551.0s | icking
+1139 |   551.4s | murmurs
+1140 |   551.8s | joneloyed
+1141 |   552.6s | wailing
+1142 |   553.0s | franks
+1143 |   553.4s | evankyle
+1144 |   554.2s | hayden
+1145 |   554.6s | marie
+1146 |   555.0s | jaunty
+1147 |   555.4s | tongued
+1148 |   555.8s | cants
+1149 |   556.2s | asshohoun
+1150 |   557.0s | d'albret
+1151 |   557.4s | skintight
+1152 |   557.8s | jester
+1153 |   558.2s | i.e.
+1154 |   558.6s | wafting
+1155 |   559.0s | ishmael
+1156 |   559.4s | unwavering
+1157 |   559.8s | jonedainty
+1158 |   560.6s | mona
+1159 |   561.0s | stilted
+1160 |   561.4s | vikirnoff
+1161 |   561.8s | icking
+1162 |   562.2s | thrashing
+1163 |   562.6s | evancated
+1164 |   563.4s | underhanded
+1165 |   563.8s | eavesdropping
+1166 |   564.2s | asshofettered
+1167 |   565.0s | joan
+1168 |   565.4s | tongued
+1169 |   565.8s | downcast
+1170 |   566.2s | franks
+1171 |   566.6s | goddamned
+1172 |   567.0s | unaccustomed
+1173 |   567.4s | jingling
+1174 |   567.8s | simpliǽ
+1175 |   568.6s | i.e.
+1176 |   569.0s | jonehooted
+1177 |   569.8s | contribuappreciimpromptu
+1178 |   571.0s | miffed
+1179 |   571.4s | bossy
+1180 |   571.8s | chirping
+1181 |   572.2s | asshofettered
+1182 |   573.0s | joan
+1183 |   573.4s | ishmael
+1184 |   573.8s | tongued
+1185 |   574.2s | downcast
+1186 |   574.6s | eavesdropping
+1187 |   575.0s | goddamned
+1188 |   575.4s | wafting
+1189 |   575.8s | mona
+1190 |   576.2s | awed
+1191 |   576.6s | huffed
+1192 |   577.0s | jai
+1193 |   577.4s | wren
+1194 |   577.8s | domed
+1195 |   578.2s | jingling
+1196 |   578.6s | matriraggedly
+1197 |   579.4s | chanccalmer
+1198 |   580.2s | dwight
+1199 |   580.6s | asshobarbe75
+1200 |   581.8s | tongued
+1201 |   582.2s | downcast
+1202 |   582.6s | haphadainty
+1203 |   583.4s | wafting
+1204 |   583.8s | ishmael
+1205 |   584.2s | skintight
+1206 |   584.6s | jester
+1207 |   585.0s | i.e.
+1208 |   585.4s | jonekeenly
+1209 |   586.2s | dweller
+1210 |   586.6s | bossy
+1211 |   587.0s | contribufantasize
+1212 |   587.8s | evanorchids
+1213 |   588.6s | asshoregis
+1214 |   589.4s | physiloony
+1215 |   590.2s | tongued
+1216 |   590.6s | eavesdropping
+1217 |   591.0s | haphazzzzloyed
+1218 |   592.2s | ute
+1219 |   592.6s | d'albret
+1220 |   593.0s | o'clock
+1221 |   593.4s | jonedainty
+1222 |   594.2s | wharkenna
+1223 |   595.0s | contribufantasize
+1224 |   595.8s | evanorchids
+1225 |   596.6s | ishmael
+1226 |   597.0s | vultures
+1227 |   597.4s | bublanski
+1228 |   597.8s | physiloony
+1229 |   598.6s | 9
+1230 |   599.0s | tongued
+1231 |   599.4s | jaunty
+1232 |   599.8s | eavesdropping
+1233 |   600.2s | asshohoun
+1234 |   601.0s | vikirnoff
+1235 |   601.4s | d'albret
+1236 |   601.8s | bristling
+1237 |   602.2s | kasey
+1238 |   602.6s | trekked
+1239 |   603.0s | jai
+1240 |   603.4s | icians
+1241 |   603.8s | joan
+1242 |   604.2s | disinfecwaned
+1243 |   605.0s | ishmael
+1244 |   605.4s | skintight
+1245 |   605.8s | jester
+1246 |   606.2s | dissertumbled
+1247 |   607.0s | mona
+1248 |   607.4s | tongued
+1249 |   607.8s | downcast
+1250 |   608.2s | asshohoun
+1251 |   609.0s | contribufantasize
+1252 |   609.8s | jonekeenly
+1253 |   610.6s | evankyle
+1254 |   611.4s | sidetracked
+1255 |   611.8s | vultures
+1256 |   612.2s | joan
+1257 |   612.6s | lusted
+1258 |   613.0s | ishmael
+1259 |   613.4s | pretentious
+1260 |   613.8s | nicolette
+1261 |   614.2s | skintight
+1262 |   614.6s | d'albret
+1263 |   615.0s | mona
+1264 |   615.4s | vikirnoff
+1265 |   615.8s | tongued
+1266 |   616.2s | downcast
+1267 |   616.6s | asshoscabs
+1268 |   617.4s | scientiaran
+1269 |   618.2s | physiernest
+1270 |   619.0s | modiaccursed
+1271 |   619.8s | jaunty
+1272 |   620.2s | stilted
+1273 |   620.6s | contribufantasize
+1274 |   621.4s | evankyle
+1275 |   622.2s | joneloyed
+1276 |   623.0s | d'albret
+1277 |   623.4s | 9
+1278 |   623.8s | tongued
+1279 |   624.2s | skintight
+1280 |   624.6s | vengeful
+1281 |   625.0s | vultures
+1282 |   625.4s | ishmael
+1283 |   625.8s | sidetracked
+1284 |   626.2s | bublanski
+1285 |   626.6s | 95
+1286 |   627.0s | ologist
+1287 |   627.4s | wafting
+1288 |   627.8s | joan
+1289 |   628.2s | asshoregis
+1290 |   629.0s | giddeon
+1291 |   629.4s | fragrant
+1292 |   629.8s | grunpowdery
+1293 |   630.6s | impassable
+1294 |   631.0s | frilly
+1295 |   631.4s | jolting
+1296 |   631.8s | tongued
+1297 |   632.2s | underhanded
+1298 |   632.6s | jerkin
+1299 |   633.0s | mona
+1300 |   633.4s | stilted
+1301 |   633.8s | contribufantasize
+1302 |   634.6s | evankyle
+1303 |   635.4s | jonekeenly
+1304 |   636.2s | asshoregis
+1305 |   637.0s | plying
+1306 |   637.4s | downcast
+1307 |   637.8s | joan
+1308 |   638.2s | ishmael
+1309 |   638.6s | hayden
+1310 |   639.0s | marie
+1311 |   639.4s | herst
+1312 |   639.8s | ștylenol
+1313 |   640.6s | izzmons
+1314 |   641.4s | vikirnoff
+1315 |   641.8s | skintight
+1316 |   642.2s | stilted
+1317 |   642.6s | jenner
+1318 |   643.0s | d'albret
+1319 |   643.4s | jaunty
+1320 |   643.8s | cants
+1321 |   644.2s | jonekeenly
+1322 |   645.0s | regulars
+1323 |   645.4s | asshoregis
+1324 |   646.2s | ishmael
+1325 |   646.6s | tongued
+1326 |   647.0s | roni
+1327 |   647.4s | modiǽ
+1328 |   648.2s | joan
+1329 |   648.6s | cussing
+1330 |   649.0s | jai
+1331 |   649.4s | physitylenol
+1332 |   650.2s | skintight
+1333 |   650.6s | mona
+1334 |   651.0s | stilted
+1335 |   651.4s | wailing
+1336 |   651.8s | evanjaunty
+1337 |   652.6s | jonewagged
+1338 |   653.4s | downcast
+1339 |   653.8s | matridaimon
+1340 |   654.6s | i.e.
+1341 |   655.0s | tongued
+1342 |   655.4s | underhanded
+1343 |   655.8s | eavesdropping
+1344 |   656.2s | joan
+1345 |   656.6s | hayden
+1346 |   657.0s | assholization
+1347 |   657.8s | bossy
+1348 |   658.2s | icking
+1349 |   658.6s | mona
+1350 |   659.0s | awed
+1351 |   659.4s | franks
+1352 |   659.8s | bethy
+1353 |   660.2s | lard
+1354 |   660.6s | jingling
+1355 |   661.0s | murmurgreg
+1356 |   661.8s | razia
+1357 |   662.2s | lindrossing
+1358 |   663.0s | tongued
+1359 |   663.4s | ishmael
+1360 |   663.8s | ș

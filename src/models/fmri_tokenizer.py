@@ -97,31 +97,23 @@ class FMRITokenizer(TimeSeriesEncoderBase):
         # We'll store voxel-to-ROI mapping if needed
         self.voxel_to_roi = None  # Will be set during first forward pass
         
-        # Temporal aggregation
-        if temporal_aggregation == "conv":
-            # Temporal convolution: (num_rois, TRs) -> (num_rois, 1)
-            self.temporal_conv = nn.Conv1d(
-                in_channels=1,
-                out_channels=1,
-                kernel_size=3,
-                padding=1,
-            )
-        elif temporal_aggregation == "attention":
-            # Temporal attention: learn which TRs are important
-            self.temporal_attention = nn.MultiheadAttention(
-                embed_dim=1,
-                num_heads=1,
-                batch_first=True,
-            )
+        # Projection from ROI temporal profile to embedding dimension.
+        # We keep ALL TRs as input features instead of averaging to a scalar,
+        # so each ROI contributes its full temporal profile (e.g. 10 dims for
+        # window_size=10) rather than a single number.  This avoids the rank-1
+        # collapse that results from Linear(1, dim).
+        #
+        # Build eagerly using DEFAULT_WINDOW_SIZE from config so the parameters
+        # exist before the optimizer is created. If the actual TR count differs
+        # at forward time, _build_projection will rebuild (rare).
+        self._transformer_input_dim = transformer_input_dim
+        default_window = getattr(fmri_config, "DEFAULT_WINDOW_SIZE", 10)
+        self._temporal_dim = default_window
+        self.roi_projection = nn.Linear(default_window, transformer_input_dim)
         
-        # Projection from ROI features to embedding dimension
-        # Input: (num_rois, 1) after temporal aggregation
-        # Output: (num_rois, transformer_input_dim)
-        self.roi_projection = nn.Linear(1, transformer_input_dim)
-        
-        # Positional embeddings for ROIs
+        # Positional embeddings for ROIs (small init to avoid exploding gradients)
         self.pos_embed = nn.Parameter(
-            torch.randn(1, max_rois, transformer_input_dim)
+            torch.randn(1, max_rois, transformer_input_dim) * 0.02
         )
         
         # Normalization and dropout
@@ -150,9 +142,18 @@ class FMRITokenizer(TimeSeriesEncoderBase):
             return torch.randint(0, num_rois, (num_voxels,))
         
         elif method == "anatomical":
-            # TODO: Use anatomical atlases (e.g., AAL, Schaefer)
-            # For now, fall back to random
-            return torch.randint(0, num_rois, (num_voxels,))
+            # No atlas files available, so use deterministic contiguous blocks:
+            # Shuffle voxel indices with a fixed seed (so same voxel count always
+            # gives the same mapping), then assign equal-sized contiguous blocks
+            # to each ROI. This is reproducible across runs and ensures balanced
+            # ROI sizes, unlike torch.randint which varies per run.
+            generator = torch.Generator()
+            generator.manual_seed(42)
+            perm = torch.randperm(num_voxels, generator=generator)
+            # Assign each voxel in the permuted order to an ROI round-robin
+            voxel_to_roi = torch.zeros(num_voxels, dtype=torch.long)
+            voxel_to_roi[perm] = torch.arange(num_voxels, dtype=torch.long) % num_rois
+            return voxel_to_roi
         
         else:
             raise ValueError(f"Unknown ROI selection method: {method}")
@@ -193,44 +194,14 @@ class FMRITokenizer(TimeSeriesEncoderBase):
         
         return roi_data
     
-    def _aggregate_temporal(
-        self, 
-        roi_data: torch.Tensor
-    ) -> torch.Tensor:
-        """
-        Aggregate temporal dimension (TRs) for each ROI.
-        
-        Args:
-            roi_data: (num_rois, TRs) tensor
-        
-        Returns:
-            aggregated: (num_rois, 1) tensor
-        """
-        if self.temporal_aggregation == "mean":
-            # Simple average across TRs
-            return roi_data.mean(dim=1, keepdim=True)
-        
-        elif self.temporal_aggregation == "conv":
-            # Temporal convolution
-            # Input: (num_rois, TRs) -> (num_rois, 1, TRs)
-            x = roi_data.unsqueeze(1)  # (num_rois, 1, TRs)
-            x = self.temporal_conv(x)  # (num_rois, 1, TRs)
-            # Global average pooling
-            x = x.mean(dim=2, keepdim=True)  # (num_rois, 1, 1)
-            return x.squeeze(2)  # (num_rois, 1)
-        
-        elif self.temporal_aggregation == "attention":
-            # Temporal attention
-            # Input: (num_rois, TRs) -> (num_rois, TRs, 1)
-            x = roi_data.unsqueeze(2)  # (num_rois, TRs, 1)
-            # Self-attention across TRs
-            x_attn, _ = self.temporal_attention(x, x, x)  # (num_rois, TRs, 1)
-            # Average pooled
-            x_attn = x_attn.mean(dim=1, keepdim=True)  # (num_rois, 1, 1)
-            return x_attn.squeeze(2)  # (num_rois, 1)
-        
-        else:
-            raise ValueError(f"Unknown temporal aggregation: {self.temporal_aggregation}")
+    def _build_projection(self, temporal_dim: int):
+        """Lazily build the projection layer once we know the TR count."""
+        self._temporal_dim = temporal_dim
+        self.roi_projection = nn.Linear(temporal_dim, self._transformer_input_dim)
+        # Move to same device/dtype as pos_embed
+        self.roi_projection = self.roi_projection.to(
+            device=self.pos_embed.device, dtype=self.pos_embed.dtype
+        )
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -246,16 +217,17 @@ class FMRITokenizer(TimeSeriesEncoderBase):
         """
         # Handle different input shapes
         if x.ndim == 2:
-            # [B, L] - flattened, need to reshape
-            # This is for compatibility with OpenTSLM's interface
-            # We'll assume the dataset provides proper shape, but handle this case
+            # [B, L] - flattened by _encode_vision_x rearrange.
+            # Unflatten back to (B, voxels, TRs) using DEFAULT_WINDOW_SIZE.
             B, L = x.shape
-            # Try to infer voxels and TRs (this is a fallback)
-            # In practice, dataset should provide (B, voxels, TRs)
-            raise ValueError(
-                "FMRITokenizer expects 3D input [B, voxels, TRs]. "
-                "Please ensure dataset provides proper shape."
-            )
+            num_trs = self._temporal_dim  # from config DEFAULT_WINDOW_SIZE
+            num_voxels = L // num_trs
+            if num_voxels * num_trs != L:
+                raise ValueError(
+                    f"Cannot unflatten 2D input (B={B}, L={L}) into (B, voxels, TRs={num_trs}). "
+                    f"L must be divisible by TRs."
+                )
+            x = x.view(B, num_voxels, num_trs)
         
         elif x.ndim == 3:
             # [B, voxels, TRs] or [B, num_rois, TRs]
@@ -270,8 +242,8 @@ class FMRITokenizer(TimeSeriesEncoderBase):
             x_std = x.std(dim=2, keepdim=True) + 1e-8  # (B, features, 1)
             x = (x - x_mean) / x_std
         
-        # Group voxels into ROIs if needed
-        if num_features != self.num_rois or self.roi_selection_method != "all_voxels":
+        # Group voxels into ROIs if needed (skip if already pre-grouped to num_rois)
+        if num_features != self.num_rois:
             # Need to group voxels into ROIs
             if self.voxel_to_roi is None or self.voxel_to_roi.shape[0] != num_features:
                 # Create ROI mapping on first pass
@@ -291,17 +263,15 @@ class FMRITokenizer(TimeSeriesEncoderBase):
             # Already in ROI format
             roi_data = x  # (B, num_rois, TRs)
         
-        # Aggregate temporal dimension
-        # Process each sample
-        aggregated_list = []
-        for b in range(B):
-            aggregated = self._aggregate_temporal(roi_data[b])  # (num_rois, 1)
-            aggregated_list.append(aggregated)
-        aggregated = torch.stack(aggregated_list, dim=0)  # (B, num_rois, 1)
-        
-        # Project to embedding dimension
-        # (B, num_rois, 1) -> (B, num_rois, transformer_input_dim)
-        embeddings = self.roi_projection(aggregated)  # (B, num_rois, transformer_input_dim)
+        # Project full temporal profile to embedding dimension.
+        # roi_data is (B, num_rois, TRs) — we keep all TRs as input features
+        # so that Linear(TRs, dim) can learn which temporal patterns matter.
+        num_trs = roi_data.shape[2]
+        if self.roi_projection is None or self._temporal_dim != num_trs:
+            self._build_projection(num_trs)
+
+        # (B, num_rois, TRs) -> (B, num_rois, transformer_input_dim)
+        embeddings = self.roi_projection(roi_data)
         
         # Add positional embeddings
         num_rois_actual = embeddings.size(1)
