@@ -23,10 +23,18 @@ dist/
 
 # Trained models and outputs (do not push; share via drive or re-run)
 checkpoints/
-/models/
+models/
 results/
 scores/
 logs/
+data_lm/
 data/Huth/derivative/preprocessed_data/*
 data/Huth/*
 Huth/*
+
+# Large binary files
+*.npz
+*.pt
+*.bin
+*.ckpt
+*.safetensors
